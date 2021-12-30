@@ -1,7 +1,10 @@
-import type { NextPage } from 'next';
+import type { NextPage, GetStaticProps } from 'next';
 import { Typography } from 'antd';
 
-const Home: NextPage = () => {
+const Home: NextPage<{
+  build: Date;
+  mode: typeof process.env.APP_ENV;
+}> = props => {
   return (
     <div className='bg-white p-6 flex flex-col items-center mt-8'>
       <Typography className='w-1/2'>
@@ -55,6 +58,7 @@ const Home: NextPage = () => {
         <Typography.Paragraph>
           <Typography.Text delete>感觉应该没有多少人看过旧版本，所以补上了站点介绍。</Typography.Text>
         </Typography.Paragraph>
+        <Typography.Title level={3}>来由</Typography.Title>
         <Typography.Paragraph>
           最初版本是作为选修课的大作业被制作出来的，使用的 React 和纯 CSS
           编写。本来打算作为博客和云文档使用，但是因为验收完成之后发现没有什么想表达的内容，所以最终搁置了。
@@ -62,9 +66,23 @@ const Home: NextPage = () => {
         <Typography.Paragraph>
           最近有了兴致，打算写一点东西，然后发现旧博客的种种问题，因此开始重构。
         </Typography.Paragraph>
+        <Typography.Title level={3}>版本</Typography.Title>
+        <Typography.Paragraph>
+          以 {props.mode} 模式构建于 {props.build}
+        </Typography.Paragraph>
       </Typography>
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps = async ctx => {
+  const now = new Date();
+  return {
+    props: {
+      build: `${now}`,
+      mode: process.env.APP_ENV,
+    },
+  };
 };
 
 export default Home;
