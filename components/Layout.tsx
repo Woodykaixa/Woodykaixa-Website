@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
 
   return (
-    <Layout>
+    <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full '>
         <div className='flex h-full'>
           <div className='text-white  mr-6'>

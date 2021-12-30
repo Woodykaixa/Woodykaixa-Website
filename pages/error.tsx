@@ -11,8 +11,7 @@ export type ErrorPageProps = {
 
 const ErrorPage: NextPage<ErrorPageProps> = ({ reason, title, serverError }) => {
   return (
-    <div style={{ minHeight: 'calc(100vh - 12rem)' }} className='flex flex-col justify-center'>
-
+    <div className='m-16 flex flex-col justify-center'>
       <Result
         status='error'
         title={title}
