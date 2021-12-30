@@ -4,20 +4,35 @@ import { GithubAPI } from '../util/github-api';
 
 export function UserPanel() {
   return (
-    <div className='w-60 bg-white rounded-lg shadow-md p-4'>
-      <div>被你发现了！</div>
-      <div>登录UI还没做，登录还没做，打算直接跟 GitHub 绑定</div>
-      <Button
-        type='primary'
-        onClick={() => {
-          const url = GithubAPI.getLoginUrl('123');
-          const a = document.createElement('a');
-          a.href = url;
-          a.click();
-        }}
-      >
-        点击登录
-      </Button>
+    <div className='w-60 bg-white rounded-lg shadow-md p-4 flex flex-col items-center'>
+      <p>您尚未登录。可以浏览文章，但是评论功能不可用。</p>
+      <p>请登录以体验卡夏妙妙屋的全部功能。</p>
+      <div className='flex flex-col items-center w-4/5'>
+        <Button
+          type='primary'
+          className='w-full'
+          onClick={() => {
+            const url = GithubAPI.getLoginUrl('123');
+            const a = document.createElement('a');
+            a.href = url;
+            a.click();
+          }}
+        >
+          点击登录
+        </Button>
+        <div>或</div>
+        <Button
+          className='w-full'
+          onClick={() => {
+            const url = GithubAPI.getLoginUrl('123');
+            const a = document.createElement('a');
+            a.href = url;
+            a.click();
+          }}
+        >
+          使用 GitHub 账号注册
+        </Button>
+      </div>
     </div>
   );
 }

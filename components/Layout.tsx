@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
 
   return (
-    <Layout>
+    <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full '>
         <div className='flex h-full'>
           <div className='text-white  mr-6'>
@@ -57,6 +57,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           ©2021 Created by{' '}
           <a href='https://github.com/Woodykaixa' target='_blank' rel='noreferrer'>
             Woodykaixa
+          </a>
+          {' | '}
+          <a href='https://github.com/Woodykaixa/Woodykaixa-Website' target='_blank' rel='noreferrer'>
+            查看网站源代码
           </a>
         </p>
       </Footer>
