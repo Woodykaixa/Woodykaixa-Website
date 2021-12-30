@@ -50,12 +50,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </Header>
       <Content className='px-12 py-0 mt-16'>{children}</Content>
       <Footer className='text-center'>
-        <a href='https://beian.miit.gov.cn/' target='_blank'>
+        <a href='https://beian.miit.gov.cn/' target='_blank' rel='noreferrer'>
           京ICP备20006005号
         </a>
         <p>
           ©2021 Created by{' '}
-          <a href='https://github.com/Woodykaixa' target='_blank'>
+          <a href='https://github.com/Woodykaixa' target='_blank' rel='noreferrer'>
             Woodykaixa
           </a>
         </p>
