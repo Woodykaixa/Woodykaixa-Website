@@ -58,6 +58,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <a href='https://github.com/Woodykaixa' target='_blank' rel='noreferrer'>
             Woodykaixa
           </a>
+          {' | '}
+          <a href='https://github.com/Woodykaixa/Woodykaixa-Website' target='_blank' rel='noreferrer'>
+            查看网站源代码
+          </a>
         </p>
       </Footer>
     </Layout>
