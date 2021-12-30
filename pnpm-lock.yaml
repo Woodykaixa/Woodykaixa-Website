@@ -10,6 +10,7 @@ importers:
       '@types/styled-components': ^5.1.19
       antd: ^4.18.0
       autoprefixer: ^10.4.0
+      cross-env: ^7.0.3
       eslint: 8.5.0
       eslint-config-next: 12.0.7
       eslint-config-prettier: ^8.3.0
@@ -33,6 +34,7 @@ importers:
       '@types/react': 17.0.38
       '@types/styled-components': 5.1.19
       autoprefixer: 10.4.0_postcss@8.4.5
+      cross-env: 7.0.3
       eslint: 8.5.0
       eslint-config-next: 12.0.7_151adb91c2dbffa9bf336078aa7406b9
       eslint-config-prettier: 8.3.0_eslint@8.5.0
@@ -1293,6 +1295,14 @@ packages:
       safe-buffer: 5.2.1
       sha.js: 2.4.11
     dev: false
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha1-hlJkspZ33AFbqEGJGJZd0jL8VM8=, tarball: cross-env/download/cross-env-7.0.3.tgz?cache=0&sync_timestamp=1633330267640&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fcross-env%2Fdownload%2Fcross-env-7.0.3.tgz}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: true
 
   /cross-spawn/7.0.3:
     resolution: {integrity: sha1-9zqFudXUHQRVUcF34ogtSshXKKY=, tarball: cross-spawn/download/cross-spawn-7.0.3.tgz}
