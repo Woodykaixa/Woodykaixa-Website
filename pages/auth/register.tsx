@@ -1,9 +1,12 @@
-import { useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
-import { Form, Input, Button, Avatar } from 'antd';
+import { Form, Input, Button } from 'antd';
 import Image from 'next/image';
+import { GitHubAPI, GitHubState } from '../../util';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const Login: NextPage = (query: any) => {
+  useStateCheck(query.state);
   return (
     <div className='bg-white p-8 mt-16 mx-8'>
       <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} autoComplete='on' className='items-center p-4'>
@@ -32,12 +35,31 @@ const Login: NextPage = (query: any) => {
           <Button type='primary' htmlType='submit' disabled>
             立即注册
           </Button>
-          <Button htmlType='button' className='ml-4'>放弃注册</Button>
+          <Button htmlType='button' className='ml-4'>
+            放弃注册
+          </Button>
         </Form.Item>
       </Form>
     </div>
   );
 };
+
+function useStateCheck(state: string) {
+  const router = useRouter();
+  useEffect(() => {
+    if (state !== GitHubState.get()) {
+      router.push({
+        pathname: '/error',
+        query: {
+          err: 'state mismatch',
+          desc: `${state} !== ${GitHubState.get()}. Maybe you are under a cross-site attack?`,
+        },
+      });
+    } else {
+      localStorage.removeItem('GITHUB_OAUTH_STATE');
+    }
+  }, [state, router]);
+}
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
   // return {
@@ -74,10 +96,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       };
     }
     const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/github/get-user-info?token=' + json.access_token);
-    const user_info = res.json();
+    const user_info = await res.json();
     console.log('res', user_info);
     return {
-      props: user_info,
+      props: { ...user_info, state: ctx.query.state },
     };
   } catch (err) {
     if (err instanceof Error) {
