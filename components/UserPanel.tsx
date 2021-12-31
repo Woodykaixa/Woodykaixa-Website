@@ -7,7 +7,7 @@ export function UserPanel() {
     <div className='w-60 bg-white rounded-lg shadow-md p-4 flex flex-col items-center'>
       <p>您尚未登录。可以浏览文章，但是评论功能不可用。</p>
       <p>请登录以体验卡夏妙妙屋的全部功能。</p>
-      <div className='flex flex-col items-center w-4/5'>
+      <div className='flex flex-col items-center w-full px-2'>
         <Button type='primary' className='w-full'>
           点击登录
         </Button>
