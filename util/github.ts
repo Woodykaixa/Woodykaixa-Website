@@ -8,7 +8,12 @@ export const GitHubAPI = {
 
 export const GitHubState = {
   get() {
-    return localStorage.getItem('GITHUB_OAUTH_STATE') ?? randomString();
+    let state = localStorage.getItem('GITHUB_OAUTH_STATE');
+    if (!state) {
+      state = randomString();
+      localStorage.setItem('GITHUB_OAUTH_STATE', state);
+    }
+    return state;
   },
 
   set(state: string) {
