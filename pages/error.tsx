@@ -1,6 +1,7 @@
 import { Result, Button, Typography } from 'antd';
 import { GetServerSideProps, NextPage } from 'next';
-import Head from 'next/head';
+import Image from 'next/image';
+
 const { Paragraph } = Typography;
 
 export type ErrorPageProps = {
@@ -13,6 +14,7 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ reason, title, serverError }) => 
   return (
     <div className='m-16 flex flex-col justify-center'>
       <Result
+        icon={<Image src='/error-img.png' alt='error' width={120} height={120} className='rounded-full'></Image>}
         status='error'
         title={title}
         subTitle={reason}
