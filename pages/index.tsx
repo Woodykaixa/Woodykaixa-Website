@@ -1,10 +1,15 @@
 import type { NextPage, GetStaticProps } from 'next';
 import { Typography } from 'antd';
+import { useEffect } from 'react';
 
 const Home: NextPage<{
-  build: Date;
+  build: string;
   mode: typeof process.env.APP_ENV;
 }> = props => {
+  useEffect(() => {
+    console.log('mode:', props.mode);
+    console.log('build at:', new Date(props.build));
+  }, []);
   return (
     <div className='bg-white p-6 flex flex-col items-center mt-8'>
       <Typography className='w-1/2'>
@@ -79,7 +84,7 @@ export const getStaticProps: GetStaticProps = async ctx => {
   const now = new Date();
   return {
     props: {
-      build: `${now}`,
+      build: now.toUTCString(),
       mode: process.env.APP_ENV,
     },
   };

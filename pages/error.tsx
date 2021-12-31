@@ -18,11 +18,8 @@ const ErrorPage: NextPage<ErrorPageProps> = ({ reason, title, serverError }) => 
         subTitle={reason}
         className='p-24 bg-white py-44'
         extra={[
-          <Button type='primary' key='console' href={'https://www.baidu.com'}>
-            Retry
-          </Button>,
-          <Button key='buy' href='mailto:690750353@qq.com'>
-            Contact author
+          <Button type='primary' key='contact' href='mailto:690750353@qq.com'>
+            联系站长
           </Button>,
         ]}
       >

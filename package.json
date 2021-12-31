@@ -3,10 +3,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:staging": "cross-env APP_ENV=staging next build",
+    "build": "node scripts/prepare-env.mjs && next build",
+    "build:staging": "cross-env APP_ENV=staging node scripts/prepare-env.mjs && next build",
+    "build:production": "cross-env APP_ENV=production node scripts/prepare-env.mjs && next build",
     "start": "next start",
-    "start:staging":"cross-env APP_ENV=staging next start",
     "lint": "next lint"
   },
   "dependencies": {
