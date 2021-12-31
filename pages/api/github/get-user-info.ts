@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { GitHubGetUsersDTO } from '../../../dto';
 
 export default function handler(
   req: NextApiRequest,
