@@ -1,6 +1,7 @@
 import type { NextPage, GetStaticProps } from 'next';
 import { Typography } from 'antd';
 import { useEffect } from 'react';
+import { SiteConfig } from '../config';
 
 const Home: NextPage<{
   build: string;
@@ -30,8 +31,8 @@ const Home: NextPage<{
           就读于北京工业大学信息安全专业，2022 年毕(shi)业。虽然专业是信息安全，但是目前就业方向是前端开发，常用
           TypeScript、ES6+、Node.JS、React，也可以写 C/C++，在学 Rust。喜欢造轮子，项目大多托管在 Github 上。
         </Typography.Paragraph>
-        <Typography.Title level={2}>做过的项目</Typography.Title>
-        <Typography.Title level={3}>
+        <Typography.Title level={3}>做过的项目</Typography.Title>
+        <Typography.Title level={4}>
           <Typography.Link href='https://github.com/Woodykaixa/BeDbg' target='_blank'>
             BeDBG
           </Typography.Link>
@@ -39,7 +40,7 @@ const Home: NextPage<{
         <Typography.Paragraph>
           毕业设计项目。使用 Windows Debug API 实现的动态调试器。剩下的写毕设任务书的时候再编吧！
         </Typography.Paragraph>
-        <Typography.Title level={3}>
+        <Typography.Title level={4}>
           <Typography.Link href='https://github.com/Woodykaixa/masm-code' target='_blank'>
             masm-code
           </Typography.Link>
@@ -48,14 +49,27 @@ const Home: NextPage<{
           用于学习教学需求的 VSCode 语言插件，基于 TextMate 语法实现了 8086 汇编的语法高亮，并集成了学校教学使用的
           DOSBox，一键编译运行。
         </Typography.Paragraph>
-        <Typography.Title level={2}>关于我的其他信息</Typography.Title>
+        <Typography.Title level={4}>
+          <Typography.Link href='https://github.com/Woodykaixa/Woodykaixa-Website' target='_blank'>
+            Woodykaixa-Website
+          </Typography.Link>
+        </Typography.Title>
+        <Typography.Paragraph>
+          个人网站、博客。使用 Next.js 并部署在 Vercel, 代码推送后自动部署。
+          <Typography.Text delete>太好用了呜呜呜。</Typography.Text>相比旧版网站，增加了 SSR 来进行 SEO
+          优化，还使用了诸多云服务简化部署。预计提供基于阿里云 OSS 的内容管理平台，以及阿里云 MongoDB 数据库。
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          是的，就是本站源代码。<Typography.Text delete>呜呜呜，我好菜，没有拿得出手的项目经历。</Typography.Text>
+        </Typography.Paragraph>
+        <Typography.Title level={3}>关于我的其他信息</Typography.Title>
         <Typography.Paragraph>
           <ul className='list-none'>
-            <li>本科: 北京工业大学信息安全专业</li>
-            <li>硕士: 没考呢</li>
+            <li>🏢本科: 北京工业大学，信息安全专业</li>
+            <li>🏫硕士: 考了，估计是考不上了😭</li>
             <li>主前端开发，后端也写过 CURD (TypeScript, Node.js)</li>
             <li>其实吧，让我写 C++ 我也会一点</li>
-            <li>Windows 用户 (装 WSL2 Ubuntu 算不算 Linux 用户？)</li>
+            <li>Windows 用户 (装 WSL2 Ubuntu 算不算 Linux 用户？但是最近 WSL2 坏了)</li>
             <li>6年云拉拉人 (全员推！) (人之初性本d，誰でも大好き!)</li>
           </ul>
         </Typography.Paragraph>
@@ -63,7 +77,7 @@ const Home: NextPage<{
         <Typography.Paragraph>
           <Typography.Text delete>感觉应该没有多少人看过旧版本，所以补上了站点介绍。</Typography.Text>
         </Typography.Paragraph>
-        <Typography.Title level={3}>来由</Typography.Title>
+        <Typography.Title level={3}>{SiteConfig.title}——起源</Typography.Title>
         <Typography.Paragraph>
           最初版本是作为选修课的大作业被制作出来的，使用的 React 和纯 CSS
           编写。本来打算作为博客和云文档使用，但是因为验收完成之后发现没有什么想表达的内容，所以最终搁置了。
