@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import * as React from 'react';
-import { SiteConfig } from '../config';
+import { SiteConfig } from '../config/site';
 import { GitHubAPI, GitHubState } from '../util/github';
 
 export function UserPanel() {

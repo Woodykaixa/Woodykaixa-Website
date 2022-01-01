@@ -1,7 +1,7 @@
 import type { NextPage, GetStaticProps } from 'next';
 import { Typography } from 'antd';
 import { useEffect } from 'react';
-import { SiteConfig } from '../config';
+import { SiteConfig } from '../config/site';
 
 const Home: NextPage<{
   build: string;
