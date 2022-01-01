@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Form, Input, Button } from 'antd';
 import Image from 'next/image';
-import { GitHubAPI, GitHubState } from '../../util';
+import { GitHubState } from '@/util';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
