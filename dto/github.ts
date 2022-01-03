@@ -32,3 +32,15 @@ export type GitHubGetUsersDTO = {
   created_at: string;
   updated_at: string;
 };
+
+export type GetUserInfoResp = {
+  login: string;
+  avatar_url: string;
+  html_url: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+  bio: string;
+  id: number;
+};

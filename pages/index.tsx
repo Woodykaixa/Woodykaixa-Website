@@ -96,6 +96,7 @@ const Home: NextPage<{
 
 export const getStaticProps: GetStaticProps = async ctx => {
   const now = new Date();
+  console.log(process.env.DATABASE_URL);
   return {
     props: {
       build: now.toUTCString(),

@@ -1,18 +1,10 @@
+import { GetUserInfoResp } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<
-    | {
-        login: string;
-        avatar_url: string;
-        html_url: string;
-        company: string;
-        blog: string;
-        location: string;
-        email: string;
-        bio: string;
-      }
+    | GetUserInfoResp
     | {
         error: string;
         desc: string;
@@ -48,6 +40,7 @@ export default function handler(
         location: json.location,
         email: json.email,
         bio: json.bio,
+        id: json.id,
       });
     })
     .catch((err: Error) => {
