@@ -6,11 +6,12 @@ import bcrypt from 'bcrypt';
 
 const client = new PrismaClient();
 export default function handler(req: NextApiRequest, res: NextApiResponse<CreateUserResp>) {
+  console.log(req.query, req.body);
   client
     .$connect()
     .then(() => {
       ensureMethod(req.method, ['POST']);
-      return parseParam<CreateUserDTO>(req.body, {
+      return parseParam<CreateUserDTO>(JSON.parse(req.body), {
         blog: param => ({
           valid: true,
           parsed: param ? firstValue(param) : null,
@@ -46,7 +47,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
           ...dto,
           admin: false,
           password,
-          salt,          
+          salt,
         },
       });
     })
@@ -59,6 +60,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
       res.status(400).json({ err: err.name, desc: err.message });
     })
     .finally(() => {
+      console.log('client disconnected');
       return client.$disconnect();
     });
 }

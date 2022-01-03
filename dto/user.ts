@@ -1,4 +1,4 @@
-import { User } from 'prisma/prisma-client';
+import type { User } from '@prisma/client';
 export type CreateUserDTO = Omit<User, 'id' | 'salt' | 'admin'>;
 
-export type CreateUserResp = User | { err: string; desc: string };
+export type CreateUserResp = Omit<User, 'salt' | 'password'> | { err: string; desc: string };
