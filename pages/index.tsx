@@ -1,6 +1,6 @@
 import type { NextPage, GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Typography, notification } from 'antd';
+import { Typography, notification, Alert } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
 import { CommonAPIErrorResponse, GetFileResp } from '@/dto';
@@ -31,6 +31,12 @@ const Home: NextPage<ServerSideProps> = props => {
         <meta property='og:description' content="Woodykaixa's personal website. Blog, personal net dist, etc." />
       </Head>
       <div className='bg-white p-6 flex flex-col items-center mt-8'>
+        <Alert
+          message='暂时没有时间做多分辨率响应式布局，所以建议在宽度超过1536px的设备上浏览'
+          className='2xl:hidden'
+          type='warning'
+          closable
+        />
         <Markdown options={IndexOptions}>{props.err_or_content}</Markdown>
       </div>
     </>
