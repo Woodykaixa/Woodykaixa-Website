@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { ListFilesDTO } from '../../dto';
+import { ListFilesDTO } from '@/dto';
 const Blog: NextPage<{
   files: Array<{ path: string; type: string }>;
 }> = ({ files }) => {

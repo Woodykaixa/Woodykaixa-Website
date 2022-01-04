@@ -1,42 +1,142 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, notification } from 'antd';
 import Image from 'next/image';
-import { GitHubAPI, GitHubState } from '../../util';
-import { useEffect } from 'react';
+import { GitHubState } from '@/util';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { raiseError } from '@/util/api';
+import { CreateUserDTO, GetUserInfoResp, CreateUserResp } from '@/dto';
 
-const Login: NextPage = (query: any) => {
+const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
   useStateCheck(query.state);
+  const [uploading, setUploading] = useState(false);
+  const [form] = Form.useForm<CreateUserDTO>();
+  const submit = () => {
+    setUploading(true);
+    const body = form.getFieldsValue();
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/user/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(res => res.json() as Promise<CreateUserResp>)
+      .then(result => {
+        if (result.error) {
+          raiseError(result);
+        }
+        notification.success({
+          message: '注册成功',
+          description: '一起来玩吧!',
+        });
+        console.log('register result', result);
+      })
+      .catch((err: Error) => {
+        notification.error({
+          message: err.name,
+          description: err.message,
+        });
+      })
+      .finally(() => {
+        setUploading(false);
+      });
+  };
+
   return (
-    <div className='bg-white p-8 mt-16 mx-8'>
-      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} autoComplete='on' className='items-center p-4'>
+    <div className='bg-white p-8 mt-16 mx-8 flex justify-center'>
+      <Form
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 16 }}
+        autoComplete='on'
+        className='items-center p-4 max-w-5xl w-full'
+        initialValues={{
+          name: query.login,
+          email: query.email,
+          bio: query.bio,
+          blog: query.blog,
+          github_id: query.id,
+        }}
+        form={form}
+      >
         <Form.Item className='flex justify-center'>
           <div className='flex justify-center'>
             <Image src={query.avatar_url} alt='avatar' width={100} height={100} className='rounded-full'></Image>
           </div>
         </Form.Item>
-        <Form.Item label='Username'>
-          <Input disabled value={query.login} />
+        <Form.Item
+          label='君の名は。'
+          name='name'
+          required
+          rules={[
+            {
+              required: true,
+              max: 20,
+              message: '名字没必要那么长吧?',
+            },
+          ]}
+        >
+          <Input disabled={uploading} />
         </Form.Item>
 
-        <Form.Item label='Email'>
-          <Input value={query.email} />
+        <Form.Item name='github_id' hidden>
+          <Input value={query.id} disabled />
         </Form.Item>
 
-        <Form.Item label='Blog'>
-          <Input value={query.blog} />
+        <Form.Item
+          label='密码'
+          name='password'
+          required
+          rules={[
+            { required: true, message: '你得输入密码呀' },
+            { min: 6, message: '是不是太短了?' },
+            { max: 20, message: '也没必要这么长吧, 记得住吗?' },
+          ]}
+        >
+          <Input.Password disabled={uploading} />
         </Form.Item>
 
-        <Form.Item label='Bio'>
-          <Input value={query.bio} />
+        <Form.Item
+          label='确认密码'
+          name='confirm'
+          hasFeedback
+          dependencies={['password']}
+          required
+          rules={[
+            { required: true, message: '你得再输一遍' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('两次输入的密码不一致'));
+              },
+            }),
+          ]}
+        >
+          <Input.Password disabled={uploading} />
+        </Form.Item>
+
+        <Form.Item label='电子邮箱' name='email' required rules={[{ type: 'email', required: true }]}>
+          <Input disabled={uploading} />
+        </Form.Item>
+
+        <Form.Item label='你的主页' name='blog' rules={[{ type: 'url' }]}>
+          <Input disabled={uploading} />
+        </Form.Item>
+
+        <Form.Item label='Bio' name='bio' rules={[{ max: 200, message: '太长了，数据库放不下了!' }]}>
+          <Input.TextArea
+            disabled={uploading}
+            rows={5}
+            className=' resize-none'
+            placeholder='快来分享你有趣的灵魂⑧ !'
+          />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 16, span: 8 }}>
-          <Button type='primary' htmlType='submit' disabled>
+          <Button type='primary' onClick={submit} loading={uploading}>
             立即注册
-          </Button>
-          <Button htmlType='button' className='ml-4'>
-            放弃注册
           </Button>
         </Form.Item>
       </Form>
@@ -72,6 +172,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   //     location: 'Beijing',
   //     email: '690750353@qq.com',
   //     bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
+  //     id: 22990333,
   //   },
   // };
   const { query } = ctx;

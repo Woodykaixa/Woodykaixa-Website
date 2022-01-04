@@ -1,7 +1,7 @@
 import type { NextPage, GetStaticProps } from 'next';
 import { Typography } from 'antd';
 import { useEffect } from 'react';
-import { SiteConfig } from '../config/site';
+import { SiteConfig } from '@/config/site';
 
 const Home: NextPage<{
   build: string;
@@ -96,6 +96,7 @@ const Home: NextPage<{
 
 export const getStaticProps: GetStaticProps = async ctx => {
   const now = new Date();
+  console.log(process.env.DATABASE_URL);
   return {
     props: {
       build: now.toUTCString(),

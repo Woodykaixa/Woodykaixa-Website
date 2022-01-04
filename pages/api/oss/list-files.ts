@@ -1,7 +1,7 @@
 import OSS from 'ali-oss';
-import { OssConfig } from '../../../config/oss';
+import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ListFilesDTO } from '../../../dto';
+import { ListFilesDTO } from '@/dto';
 let client = new OSS(OssConfig);
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<ListFilesDTO>) {
@@ -23,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<ListFi
     })
     .catch((err: Error) => {
       res.status(400).json({
-        err: err.name,
+        error: err.name,
         desc: err.message,
       });
     });

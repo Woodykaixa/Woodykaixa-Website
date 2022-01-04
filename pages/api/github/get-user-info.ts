@@ -1,25 +1,7 @@
+import { GetUserInfoResp, CommonAPIErrorResponse } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GitHubGetUsersDTO } from '../../../dto';
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<
-    | {
-        login: string;
-        avatar_url: string;
-        html_url: string;
-        company: string;
-        blog: string;
-        location: string;
-        email: string;
-        bio: string;
-      }
-    | {
-        error: string;
-        desc: string;
-      }
-  >
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | CommonAPIErrorResponse>) {
   if (req.method !== 'GET') {
     res.status(400).json({
       error: 'Unsupported method',
@@ -49,6 +31,7 @@ export default function handler(
         location: json.location,
         email: json.email,
         bio: json.bio,
+        id: json.id,
       });
     })
     .catch((err: Error) => {

@@ -1,16 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GitHubGetUsersDTO } from '../../../dto';
+import { GitHubGetUsersDTO, CommonAPIErrorResponse } from '@/dto';
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<
-    | GitHubGetUsersDTO
-    | {
-        error: string;
-        desc: string;
-      }
-  >
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<GitHubGetUsersDTO | CommonAPIErrorResponse>) {
   fetch('https://api.github.com/users/Woodykaixa', {
     headers: {
       accept: 'application/vnd.github.v3+json',

@@ -9,5 +9,6 @@ declare namespace NodeJS {
     OSS_REGION: string;
     ACCESS_KEY_ID: string;
     ACCESS_KEY_SECRET: string;
+    DATABASE_URL: string;
   }
 }
