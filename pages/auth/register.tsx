@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { GitHubState } from '@/util';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { raiseError } from '@/util/api';
 import { CreateUserDTO, GetUserInfoResp, CreateUserResp } from '@/dto';
 
 const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
@@ -15,14 +16,15 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
     const body = form.getFieldsValue();
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/user/add', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     })
       .then(res => res.json() as Promise<CreateUserResp>)
       .then(result => {
-        if (result.err) {
-          const e = new Error(result.desc);
-          e.name = result.err;
-          throw e;
+        if (result.error) {
+          raiseError(result);
         }
         notification.success({
           message: '注册成功',
@@ -40,12 +42,10 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         setUploading(false);
       });
   };
+
   return (
     <div className='bg-white p-8 mt-16 mx-8 flex justify-center'>
       <Form
-        onFinish={value => {
-          console.log('on finished', form.getFieldsValue());
-        }}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
         autoComplete='on'

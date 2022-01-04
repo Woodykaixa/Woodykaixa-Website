@@ -11,7 +11,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
     .$connect()
     .then(() => {
       ensureMethod(req.method, ['POST']);
-      return parseParam<CreateUserDTO>(JSON.parse(req.body), {
+      return parseParam<CreateUserDTO>(req.body, {
         blog: param => ({
           valid: true,
           parsed: param ? firstValue(param) : null,
@@ -53,11 +53,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
     })
     .then(user => {
       console.log('created a user:', user);
-      res.status(200).json(user);
+      res.status(200).json({
+        admin: user.admin,
+        bio: user.bio,
+        blog: user.blog,
+        github_id: user.github_id,
+        name: user.name,
+        email: user.email,
+        id: user.id,
+      });
     })
     .catch((err: Error) => {
       console.log(err);
-      res.status(400).json({ err: err.name, desc: err.message });
+      res.status(400).json({ error: err.name, desc: err.message });
     })
     .finally(() => {
       console.log('client disconnected');

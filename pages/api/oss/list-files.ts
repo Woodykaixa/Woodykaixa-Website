@@ -23,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<ListFi
     })
     .catch((err: Error) => {
       res.status(400).json({
-        err: err.name,
+        error: err.name,
         desc: err.message,
       });
     });

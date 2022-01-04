@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
+import type { CommonAPIErrorResponse } from '@/dto';
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<
     | {
         token: string;
       }
-    | {
-        error: string;
-        desc: string;
-      }
+    | CommonAPIErrorResponse
   >
 ) {
   if (req.method !== 'GET') {

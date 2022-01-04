@@ -1,16 +1,7 @@
-import { GetUserInfoResp } from '@/dto';
+import { GetUserInfoResp, CommonAPIErrorResponse } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<
-    | GetUserInfoResp
-    | {
-        error: string;
-        desc: string;
-      }
-  >
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | CommonAPIErrorResponse>) {
   if (req.method !== 'GET') {
     res.status(400).json({
       error: 'Unsupported method',
