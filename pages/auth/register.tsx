@@ -5,7 +5,7 @@ import { GitHubState } from '@/util';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { raiseError } from '@/util/api';
-import { CreateUserDTO, GetUserInfoResp, CreateUserResp } from '@/dto';
+import { CreateUserDTO, GetUserInfoResp, CreateUserResp, CommonAPIErrorResponse } from '@/dto';
 
 const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
   useStateCheck(query.state);
@@ -21,10 +21,11 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
       },
       body: JSON.stringify(body),
     })
-      .then(res => res.json() as Promise<CreateUserResp>)
-      .then(result => {
-        if (result.error) {
-          raiseError(result);
+      .then(res => res.json())
+      .then((result: CreateUserResp) => {
+        // ugly fix type error, but why?
+        if ((result as CommonAPIErrorResponse).error) {
+          raiseError(result as any);
         }
         notification.success({
           message: '注册成功',
