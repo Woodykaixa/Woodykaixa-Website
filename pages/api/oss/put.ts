@@ -26,6 +26,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<PutFil
     }),
   })
     .then(param => {
+      if (process.env.APP_ENV !== 'development') {
+        throw new Error('');
+      }
       return client.put(param.name, new Buffer(param.content, 'utf-8'));
     })
     .then(result => {
