@@ -1,4 +1,5 @@
-import type { NextPage, GetStaticProps, GetServerSideProps } from 'next';
+import type { NextPage, GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { Typography, notification } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
@@ -20,65 +21,74 @@ const Home: NextPage<ServerSideProps> = props => {
   }, []);
 
   return (
-    <div className='bg-white p-6 flex flex-col items-center mt-8'>
-      <Markdown
-        options={{
-          wrapper: Typography,
-          overrides: {
-            h1: {
-              component: Title,
-              props: {
-                level: 1,
+    <>
+      <Head>
+        <meta name='og:title' content={SiteConfig.title} />
+        <meta name='og:type' content='website' />
+        {process.env.APP_ENV === 'production' && <meta name='og:url' content={process.env.NEXT_PUBLIC_BASE_URL} />}
+        <meta name='og:locale' content='zh_CN' />
+        <meta property="og:description" content="Woodykaixa's personal website. Blog, personal net dist, etc."/>
+      </Head>
+      <div className='bg-white p-6 flex flex-col items-center mt-8'>
+        <Markdown
+          options={{
+            wrapper: Typography,
+            overrides: {
+              h1: {
+                component: Title,
+                props: {
+                  level: 1,
+                },
+              },
+              h2: {
+                component: Title,
+                props: {
+                  level: 2,
+                },
+              },
+              h3: {
+                component: Title,
+                props: {
+                  level: 3,
+                },
+              },
+              h4: {
+                component: Title,
+                props: {
+                  level: 4,
+                },
+              },
+              h5: {
+                component: Title,
+                props: {
+                  level: 5,
+                },
+              },
+              link: {
+                component: Link,
+                props: {
+                  target: '_blank',
+                },
+              },
+              del: {
+                component: Text,
+                props: {
+                  delete: true,
+                },
+              },
+              p: {
+                component: Paragraph,
+              },
+              br: {
+                component: Paragraph,
               },
             },
-            h2: {
-              component: Title,
-              props: {
-                level: 2,
-              },
-            },
-            h3: {
-              component: Title,
-              props: {
-                level: 3,
-              },
-            },
-            h4: {
-              component: Title,
-              props: {
-                level: 4,
-              },
-            },
-            h5: {
-              component: Title,
-              props: {
-                level: 5,
-              },
-            },
-            link: {
-              component: Link,
-              props: {
-                target: '_blank',
-              },
-            },
-            del: {
-              component: Text,
-              props: {
-                delete: true,
-              },
-            },
-            p: {
-              component: Paragraph,
-            },
-            br: {
-              component: Paragraph,
-            },
-          },
-        }}
-      >
-        {props.err_or_content}
-      </Markdown>
-    </div>
+          }}
+        >
+          {props.err_or_content}
+        </Markdown>
+      </div>
+    </>
   );
 };
 
