@@ -1,105 +1,113 @@
-import type { NextPage, GetStaticProps } from 'next';
-import { Typography } from 'antd';
+import type { NextPage, GetStaticProps, GetServerSideProps } from 'next';
+import { Typography, notification } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
-
-const Home: NextPage<{
-  build: string;
-  mode: typeof process.env.APP_ENV;
-}> = props => {
+import { CommonAPIErrorResponse, GetFileResp } from '@/dto';
+import Markdown from 'markdown-to-jsx';
+const { Text, Title, Paragraph, Link } = Typography;
+const Home: NextPage<ServerSideProps> = props => {
   useEffect(() => {
-    console.log('mode:', props.mode);
-    console.log('build at:', new Date(props.build));
+    console.log('APP_ENV:', props.mode);
   }, []);
+
+  useEffect(() => {
+    if (props.error) {
+      notification.error({
+        message: '获取主页信息失败',
+        description: props.desc,
+      });
+    }
+  }, []);
+
   return (
     <div className='bg-white p-6 flex flex-col items-center mt-8'>
-      <Typography className='w-1/2'>
-        <Typography.Title>欢迎来到卡夏妙妙屋</Typography.Title>
-        <Typography.Paragraph>
-          太垃圾了吧~<br></br>
-          你打游戏真的好垃圾啊，简直就是菜狗<br></br>
-          我刚才看到你打游戏了，我们以后一起打好不好，一起打，一起做大牢！
-        </Typography.Paragraph>
-        <Typography.Title level={2}>关于我</Typography.Title>
-        <Typography.Paragraph>
-          Hi there👋，我是Woodykaixa，
-          22岁，是学生。我知道这个名字不太好叫。没关系，我的称呼有很多，你可以叫我：卡夏（是的，
-          这就是妙妙屋的由来）、喵爷、小墨（如果你跟我很熟），etc.
-          <Typography.Text delete>（还有一些太羞耻了，我就不说了）</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          就读于北京工业大学信息安全专业，2022 年毕(shi)业。虽然专业是信息安全，但是目前就业方向是前端开发，常用
-          TypeScript、ES6+、Node.JS、React，也可以写 C/C++，在学 Rust。喜欢造轮子，项目大多托管在 Github 上。
-        </Typography.Paragraph>
-        <Typography.Title level={3}>做过的项目</Typography.Title>
-        <Typography.Title level={4}>
-          <Typography.Link href='https://github.com/Woodykaixa/BeDbg' target='_blank'>
-            BeDBG
-          </Typography.Link>
-        </Typography.Title>
-        <Typography.Paragraph>
-          毕业设计项目。使用 Windows Debug API 实现的动态调试器。剩下的写毕设任务书的时候再编吧！
-        </Typography.Paragraph>
-        <Typography.Title level={4}>
-          <Typography.Link href='https://github.com/Woodykaixa/masm-code' target='_blank'>
-            masm-code
-          </Typography.Link>
-        </Typography.Title>
-        <Typography.Paragraph>
-          用于学习教学需求的 VSCode 语言插件，基于 TextMate 语法实现了 8086 汇编的语法高亮，并集成了学校教学使用的
-          DOSBox，一键编译运行。
-        </Typography.Paragraph>
-        <Typography.Title level={4}>
-          <Typography.Link href='https://github.com/Woodykaixa/Woodykaixa-Website' target='_blank'>
-            Woodykaixa-Website
-          </Typography.Link>
-        </Typography.Title>
-        <Typography.Paragraph>
-          个人网站、博客。使用 Next.js 并部署在 Vercel, 代码推送后自动部署。
-          <Typography.Text delete>太好用了呜呜呜。</Typography.Text>相比旧版网站，增加了 SSR 来进行 SEO
-          优化，还使用了诸多云服务简化部署。预计提供基于阿里云 OSS 的内容管理平台，以及阿里云 MongoDB 数据库。
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          是的，就是本站源代码。<Typography.Text delete>呜呜呜，我好菜，没有拿得出手的项目经历。</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Title level={3}>关于我的其他信息</Typography.Title>
-        <Typography.Paragraph>
-          <ul className='list-none'>
-            <li>🏢本科: 北京工业大学，信息安全专业</li>
-            <li>🏫硕士: 考了，估计是考不上了😭</li>
-            <li>主前端开发，后端也写过 CURD (TypeScript, Node.js)</li>
-            <li>其实吧，让我写 C++ 我也会一点</li>
-            <li>Windows 用户 (装 WSL2 Ubuntu 算不算 Linux 用户？但是最近 WSL2 坏了)</li>
-            <li>6年云拉拉人 (全员推！) (人之初性本d，誰でも大好き!)</li>
-          </ul>
-        </Typography.Paragraph>
-        <Typography.Title level={2}>关于本站</Typography.Title>
-        <Typography.Paragraph>
-          <Typography.Text delete>感觉应该没有多少人看过旧版本，所以补上了站点介绍。</Typography.Text>
-        </Typography.Paragraph>
-        <Typography.Title level={3}>{SiteConfig.title}——起源</Typography.Title>
-        <Typography.Paragraph>
-          最初版本是作为选修课的大作业被制作出来的，使用的 React 和纯 CSS
-          编写。本来打算作为博客和云文档使用，但是因为验收完成之后发现没有什么想表达的内容，所以最终搁置了。
-        </Typography.Paragraph>
-        <Typography.Paragraph>
-          最近有了兴致，打算写一点东西，然后发现旧博客的种种问题，因此开始重构。
-        </Typography.Paragraph>
-        <Typography.Title level={3}>版本</Typography.Title>
-        <Typography.Paragraph>
-          以 {props.mode} 模式构建于 {props.build}
-        </Typography.Paragraph>
-      </Typography>
+      <Markdown
+        options={{
+          wrapper: Typography,
+          overrides: {
+            h1: {
+              component: Title,
+              props: {
+                level: 1,
+              },
+            },
+            h2: {
+              component: Title,
+              props: {
+                level: 2,
+              },
+            },
+            h3: {
+              component: Title,
+              props: {
+                level: 3,
+              },
+            },
+            h4: {
+              component: Title,
+              props: {
+                level: 4,
+              },
+            },
+            h5: {
+              component: Title,
+              props: {
+                level: 5,
+              },
+            },
+            link: {
+              component: Link,
+              props: {
+                target: '_blank',
+              },
+            },
+            del: {
+              component: Text,
+              props: {
+                delete: true,
+              },
+            },
+            p: {
+              component: Paragraph,
+            },
+            br: {
+              component: Paragraph,
+            },
+          },
+        }}
+      >
+        {props.err_or_content}
+      </Markdown>
     </div>
   );
 };
 
-export const getStaticProps: GetStaticProps = async ctx => {
-  const now = new Date();
-  console.log(process.env.DATABASE_URL);
+type ServerSideProps = {
+  error: boolean;
+  err_or_content: string;
+  desc: string;
+  mode: string;
+};
+
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
+  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get?name=README.md');
+  const json = await (result.json() as Promise<GetFileResp>);
+  const jErr = json as CommonAPIErrorResponse;
+  if (jErr.error) {
+    return {
+      props: {
+        error: true,
+        err_or_content: jErr.error,
+        desc: jErr.desc,
+        mode: process.env.APP_ENV,
+      },
+    };
+  }
   return {
     props: {
-      build: now.toUTCString(),
+      error: false,
+      err_or_content: (json as any).content,
+      desc: '',
       mode: process.env.APP_ENV,
     },
   };
