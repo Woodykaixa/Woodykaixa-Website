@@ -5,3 +5,6 @@ export type ListFilesDTO =
       type: string;
     }>
   | CommonAPIErrorResponse;
+
+export type GetFileDTO = { name: string };
+export type GetFileResp = { content: string } | CommonAPIErrorResponse;
