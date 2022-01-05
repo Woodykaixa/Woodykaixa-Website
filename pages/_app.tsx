@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import 'antd/dist/antd.css';
+import '@/styles/override.css';
 import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
 import { SiteConfig } from '@/config/site';

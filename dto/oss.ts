@@ -8,3 +8,5 @@ export type ListFilesDTO =
 
 export type GetFileDTO = { name: string };
 export type GetFileResp = { content: string } | CommonAPIErrorResponse;
+export type PutFileDTO = { name: string; content: string; auth: string };
+export type PutFileResp = {} | CommonAPIErrorResponse;
