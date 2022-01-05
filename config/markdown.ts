@@ -1,6 +1,7 @@
-import { Typography, notification } from 'antd';
+import { Typography } from 'antd';
 const { Text, Title, Paragraph, Link } = Typography;
 import { MarkdownToJSX } from 'markdown-to-jsx';
+import { Hidden } from '@/components/markdown';
 export const IndexOptions: MarkdownToJSX.Options = {
   wrapper: Typography,
   overrides: {
@@ -51,6 +52,9 @@ export const IndexOptions: MarkdownToJSX.Options = {
     },
     br: {
       component: Paragraph,
+    },
+    Hidden: {
+      component: Hidden,
     },
   },
 };
