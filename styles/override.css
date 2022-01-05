@@ -1,0 +1,3 @@
+.hidden-wrapper a {
+  @apply text-black;
+}
