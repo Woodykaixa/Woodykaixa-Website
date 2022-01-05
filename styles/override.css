@@ -1,3 +1,7 @@
 .hidden-wrapper a {
-  @apply text-black;
+  @apply text-black bg-none;
+}
+
+.hidden-wrapper:hover a {
+  @apply text-blue-400;
 }
