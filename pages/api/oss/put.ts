@@ -24,9 +24,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<PutFil
       valid: !!param,
       parsed: firstValue(param!),
     }),
+    auth: param => ({
+      valid: process.env.APP_ENV === 'development' || !!param,
+      parsed: firstValue(param) ?? '',
+    }),
   })
     .then(param => {
-      if (process.env.APP_ENV !== 'development') {
+      if (process.env.APP_ENV !== 'development' || param.auth !== process.env.OSS_PUT_AUTH) {
         throw new Error('');
       }
       return client.put(param.name, new Buffer(param.content, 'utf-8'));

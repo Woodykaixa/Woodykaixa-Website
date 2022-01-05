@@ -43,6 +43,9 @@ const Me: NextPage = () => {
         <Form.Item name='name'>
           <Input></Input>
         </Form.Item>
+        <Form.Item name='auth'>
+          <Input></Input>
+        </Form.Item>
         <div className='flex'>
           <Typography className='w-1/2'>
             <Form.Item name='content'>
