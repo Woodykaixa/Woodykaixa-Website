@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import { Input, Typography, Button, Form } from 'antd';
 import Markdown from 'markdown-to-jsx';
-import { IndexOptions } from '@/config/markdown';
+import { MarkdownOptions } from '@/config/markdown';
 import { useState } from 'react';
 
 const Me: NextPage = () => {
@@ -53,7 +53,7 @@ const Me: NextPage = () => {
             </Form.Item>
           </Typography>
           <div className='w-1/2'>
-            <Markdown options={IndexOptions}>{t}</Markdown>
+            <Markdown options={MarkdownOptions}>{t}</Markdown>
           </div>
         </div>
         <Button onClick={get}>get</Button>

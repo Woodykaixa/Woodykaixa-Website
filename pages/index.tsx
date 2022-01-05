@@ -1,12 +1,12 @@
 import type { NextPage, GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Typography, notification, Alert } from 'antd';
+import { notification, Alert } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
 import { CommonAPIErrorResponse, GetFileResp } from '@/dto';
 import Markdown from 'markdown-to-jsx';
-import { IndexOptions } from '@/config/markdown';
-const { Text, Title, Paragraph, Link } = Typography;
+import { MarkdownOptions } from '@/config/markdown';
+
 const Home: NextPage<ServerSideProps> = props => {
   useEffect(() => {
     console.log('APP_ENV:', props.mode);
@@ -37,7 +37,7 @@ const Home: NextPage<ServerSideProps> = props => {
           type='warning'
           closable
         />
-        <Markdown options={IndexOptions}>{props.err_or_content}</Markdown>
+        <Markdown options={MarkdownOptions}>{props.err_or_content}</Markdown>
       </div>
     </>
   );
