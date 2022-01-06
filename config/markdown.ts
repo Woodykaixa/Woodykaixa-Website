@@ -12,7 +12,7 @@ export const MarkdownOptions: MarkdownToJSX.Options = {
       },
     },
     h2: {
-      component: Title,
+      component: MyTitle,
       props: {
         level: 2,
       },
