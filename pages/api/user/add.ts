@@ -7,13 +7,13 @@ import bcrypt from 'bcrypt';
 const client = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL.replace('"', ''),
+      url: process.env.DATABASE_URL,
     },
   },
 });
 export default function handler(req: NextApiRequest, res: NextApiResponse<CreateUserResp>) {
   console.log(req.query, req.body);
-  console.log(process.env.DATABASE_URL.replace('"', ''));
+  console.log(process.env.DATABASE_URL);
   client
     .$connect()
     .then(() => {
