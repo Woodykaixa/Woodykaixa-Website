@@ -1,20 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prismaClient from '@/lib/prisma';
 import { CreateUserDTO, CreateUserResp } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 import bcrypt from 'bcrypt';
 
-const client = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
 export default function handler(req: NextApiRequest, res: NextApiResponse<CreateUserResp>) {
   console.log(req.query, req.body);
-  console.log(process.env.DATABASE_URL);
-  client
+  prismaClient
     .$connect()
     .then(() => {
       ensureMethod(req.method, ['POST']);
@@ -46,7 +38,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
       });
     })
     .then(async dto => {
-      const user = await client.user.findFirst({
+      const user = await prismaClient.user.findFirst({
         where: {
           github_id: dto.github_id,
         },
@@ -55,7 +47,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
         console.log('dto:', dto);
         const salt = bcrypt.genSaltSync();
         const password = bcrypt.hashSync(dto.password, salt);
-        return client.user.create({
+        return prismaClient.user.create({
           data: {
             ...dto,
             admin: false,
@@ -86,6 +78,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
     })
     .finally(() => {
       console.log('client disconnected');
-      return client.$disconnect();
+      return prismaClient.$disconnect();
     });
 }

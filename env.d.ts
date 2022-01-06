@@ -1,3 +1,4 @@
+import type { PrismaClient } from '@prisma/client';
 declare namespace NodeJS {
   interface ProcessEnv {
     APP_ENV: 'development' | 'production' | 'staging';
@@ -11,4 +12,14 @@ declare namespace NodeJS {
     ACCESS_KEY_SECRET: string;
     DATABASE_URL: string;
   }
+}
+
+declare global {
+  // PrismaClient is attached to the `global` object in development to prevent
+  // exhausting your database connection limit.
+  //
+  // Learn more:
+  // https://pris.ly/d/help/next-js-best-practices
+  // So we only use this global var in development mode
+  var prisma: PrismaClient;
 }
