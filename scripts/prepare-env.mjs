@@ -8,6 +8,7 @@ const source = {
 }[process.env.APP_ENV];
 
 const dest = '.env.production';
+console.log('Current env', process.env);
 
 console.log(`Copy .env file "${source}" to "${dest}"`);
 await fs.copyFile(source, dest);
