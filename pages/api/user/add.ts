@@ -45,30 +45,28 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
         }),
       });
     })
-    .then(dto => {
-      return client.user
-        .findFirst({
-          where: {
-            github_id: dto.github_id,
+    .then(async dto => {
+      const user = await client.user.findFirst({
+        where: {
+          github_id: dto.github_id,
+        },
+      });
+      if (!user) {
+        console.log('dto:', dto);
+        const salt = bcrypt.genSaltSync();
+        const password = bcrypt.hashSync(dto.password, salt);
+        return client.user.create({
+          data: {
+            ...dto,
+            admin: false,
+            password,
+            salt,
+            avatarIds: [],
           },
-        })
-        .then(user => {
-          if (!user) {
-            console.log('dto:', dto);
-            const salt = bcrypt.genSaltSync();
-            const password = bcrypt.hashSync(dto.password, salt);
-            return client.user.create({
-              data: {
-                ...dto,
-                admin: false,
-                password,
-                salt,
-              },
-            });
-          } else {
-            return user;
-          }
         });
+      } else {
+        return user;
+      }
     })
     .then(user => {
       console.log('created a user:', user);
