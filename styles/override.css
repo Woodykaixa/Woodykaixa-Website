@@ -5,3 +5,13 @@
 .hidden-wrapper:hover a {
   @apply text-blue-400;
 }
+
+.ref-title a,
+.ref-title a:active,
+.ref-title a:visited {
+  @apply text-black opacity-80;
+}
+
+.ref-title a:hover {
+  @apply opacity-100 ease-linear duration-200 transition;
+}

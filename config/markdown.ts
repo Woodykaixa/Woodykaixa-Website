@@ -1,12 +1,12 @@
 import { Typography } from 'antd';
 const { Text, Title, Paragraph, Link } = Typography;
 import { MarkdownToJSX } from 'markdown-to-jsx';
-import { Hidden } from '@/components/markdown';
+import { Hidden, Title as MyTitle } from '@/components/markdown';
 export const MarkdownOptions: MarkdownToJSX.Options = {
   wrapper: Typography,
   overrides: {
     h1: {
-      component: Title,
+      component: MyTitle,
       props: {
         level: 1,
       },
