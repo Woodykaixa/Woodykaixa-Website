@@ -12,3 +12,6 @@ console.log('Current env', process.env);
 
 console.log(`Copy .env file "${source}" to "${dest}"`);
 await fs.copyFile(source, dest);
+await fs.writeFile(dest, '\nDATABASE_URL=' + process.env.DATABASE_URL, {
+  flag: 'a',
+});
