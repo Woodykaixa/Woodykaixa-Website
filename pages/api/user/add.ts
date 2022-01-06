@@ -4,7 +4,13 @@ import { CreateUserDTO, CreateUserResp } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 import bcrypt from 'bcrypt';
 
-const client = new PrismaClient();
+const client = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL.replace('"', ''),
+    },
+  },
+});
 export default function handler(req: NextApiRequest, res: NextApiResponse<CreateUserResp>) {
   console.log(req.query, req.body);
   client
