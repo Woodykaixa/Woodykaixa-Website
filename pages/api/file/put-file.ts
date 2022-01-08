@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Oss, File } from '@/dto';
+import { Oss, File, CommonAPIErrorResponse } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 import { BadRequest, errorHandler } from '@/util/error';
 import prismaClient from '@/lib/prisma';
@@ -15,7 +15,7 @@ import prismaClient from '@/lib/prisma';
  * invoke /api/oss/put-file, upload file to OSS, and create a File document in db.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<File.PutFileResp>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<File.PutFileResp | CommonAPIErrorResponse>) {
   ensureMethod(req.method, ['POST'])
     .then(() =>
       parseParam<File.PutFileDTO>(req.body, {

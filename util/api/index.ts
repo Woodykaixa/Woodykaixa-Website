@@ -18,3 +18,15 @@ export function raiseError(errResp: CommonAPIErrorResponse) {
   error.name = errResp.error;
   throw error;
 }
+
+type TypeOfJson = 'array' | 'boolean' | 'number' | 'object' | 'string' | 'null';
+
+export function isType(param: any, type: TypeOfJson) {
+  if (type === 'null') {
+    return param === null;
+  }
+  if (type === 'array') {
+    return !!param && Array.isArray(param);
+  }
+  return !!param && typeof param === type;
+}
