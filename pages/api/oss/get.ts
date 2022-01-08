@@ -19,7 +19,7 @@ export default function handler(
       desc: err.message,
     });
   }
-  parseParam<GetFileDTO>(req.query, {
+  parseParam<{ name: string }>(req.query, {
     name: param => ({
       valid: !!param,
       parsed: firstValue(param!),
