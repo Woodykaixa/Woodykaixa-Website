@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { GetFileDTO, GetFileResp } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
-import { BadRequest, HttpError, NotFound } from '@/util/error';
+import { BadRequest, HttpError, NotFound, errorHandler } from '@/util/error';
 
 import ossClient from '@/lib/oss';
 import prismaClient from '@/lib/prisma';
@@ -40,11 +40,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetFil
         content: result.content.toString(),
       });
     })
-    .catch((err: Error) => {
-      const code = err instanceof HttpError ? err.code : 400;
-      res.status(code).json({
-        error: err.name,
-        desc: err.message,
-      });
-    });
+    .catch(errorHandler(res));
 }

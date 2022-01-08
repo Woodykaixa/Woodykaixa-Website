@@ -3,7 +3,7 @@ import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PutFileDTO, PutFileResp } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
-import { BadRequest } from '@/util/error';
+import { BadRequest, errorHandler } from '@/util/error';
 let client = new OSS(OssConfig);
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<PutFileResp>) {
@@ -45,10 +45,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<PutFil
 
       res.status(200).json({});
     })
-    .catch((err: Error) => {
-      res.status(400).json({
-        error: err.name,
-        desc: err.message,
-      });
-    });
+    .catch(errorHandler(res));
 }

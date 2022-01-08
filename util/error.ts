@@ -1,3 +1,5 @@
+import { NextApiResponse } from 'next';
+import { CommonAPIErrorResponse } from '@/dto';
 export class HttpError extends Error {
   public readonly code: number;
   constructor(message: string, code: number) {
@@ -19,4 +21,20 @@ export class NotFound extends HttpError {
     super(message, 404);
     this.name = 'NotFound';
   }
+}
+
+export function errorHandler(response: NextApiResponse<CommonAPIErrorResponse>) {
+  return function (err: any) {
+    if (err instanceof Error) {
+      response.status(err instanceof HttpError ? err.code : 500).json({
+        error: err.name,
+        desc: err.message,
+      });
+    } else {
+      response.status(500).json({
+        error: Object.toString.call(err),
+        desc: err,
+      });
+    }
+  };
 }
