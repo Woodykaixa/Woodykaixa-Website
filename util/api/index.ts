@@ -1,14 +1,12 @@
 import { CommonAPIErrorResponse } from '@/dto/error';
-
+import { MethodNotAllowed } from '../error';
 export * from './parseParam';
 
-export function ensureMethod(actual: string | undefined, expect: string[]) {
+export async function ensureMethod(actual: string | undefined, expect: string[]): Promise<void> {
   if (!actual || !expect.includes(actual)) {
-    const err = new Error(`Expect: [${expect.join(', ')}], actual: ${actual}`);
-    err.name = 'Invalid Method';
-    throw err;
+    throw new MethodNotAllowed();
   }
-  console.log('method ensured');
+  return;
 }
 
 export function firstValue<T>(p: T | T[]) {

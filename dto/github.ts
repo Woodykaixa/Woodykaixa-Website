@@ -1,3 +1,5 @@
+import { CommonAPIErrorResponse } from '.';
+
 export type GitHubGetUsersDTO = {
   login: string;
   id: number;
@@ -33,6 +35,10 @@ export type GitHubGetUsersDTO = {
   updated_at: string;
 };
 
+export type GetUserInfoDTO = {
+  token: string;
+};
+
 export type GetUserInfoResp = {
   login: string;
   avatar_url: string;
@@ -43,4 +49,12 @@ export type GetUserInfoResp = {
   email: string;
   bio: string;
   id: number;
+};
+
+export type GetTokenDTO = {
+  code: string;
+};
+
+export type GetTokenResp = {
+  token: string;
 };

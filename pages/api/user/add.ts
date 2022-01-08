@@ -8,9 +8,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
   console.log(req.query, req.body);
   prismaClient
     .$connect()
-    .then(() => {
-      ensureMethod(req.method, ['POST']);
-      return parseParam<CreateUserDTO>(req.body, {
+    .then(() => ensureMethod(req.method, ['POST']))
+    .then(() =>
+      parseParam<CreateUserDTO>(req.body, {
         blog: param => ({
           valid: true,
           parsed: param ? firstValue(param) : null,
@@ -20,8 +20,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
           parsed: firstValue(param!),
         }),
         github_id: param => ({
-          valid: !!param,
-          parsed: parseInt(firstValue(param!), 10),
+          valid: !!param && typeof param === 'number',
+          parsed: param!,
         }),
         name: param => ({
           valid: !!param,
@@ -35,8 +35,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Create
           valid: true,
           parsed: param ? firstValue(param) : null,
         }),
-      });
-    })
+      })
+    )
     .then(async dto => {
       const user = await prismaClient.user.findFirst({
         where: {

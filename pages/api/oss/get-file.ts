@@ -10,7 +10,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetFil
   prismaClient
     .$connect()
     .then(() => {
-      ensureMethod(req.method, ['GET']);
+      return ensureMethod(req.method, ['GET']);
+    })
+    .then(() => {
       return parseParam<GetFileDTO>(req.query, {
         name: param => ({
           valid: !!param,

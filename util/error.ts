@@ -23,6 +23,13 @@ export class NotFound extends HttpError {
   }
 }
 
+export class MethodNotAllowed extends HttpError {
+  constructor(message: string = 'method not allowed') {
+    super(message, 405);
+    this.name = 'MessageNotAllowed';
+  }
+}
+
 export function errorHandler(response: NextApiResponse<CommonAPIErrorResponse>) {
   return function (err: any) {
     if (err instanceof Error) {

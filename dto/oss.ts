@@ -1,6 +1,6 @@
 import type { CommonAPIErrorResponse } from './error';
 import type { File, FileType } from '@prisma/client';
-export type ListFilesDTO =
+export type ListFilesResp =
   | Array<{
       path: string;
       type: string;
@@ -14,4 +14,9 @@ export type GetFileResp =
     })
   | CommonAPIErrorResponse;
 export type PutFileDTO = { name: string; content: string; auth: string };
-export type PutFileResp = {} | CommonAPIErrorResponse;
+export type PutFileResp = Omit<File, 'id' | 'type'> | CommonAPIErrorResponse;
+
+export namespace Oss {
+  export type PutFileDTO = { name: string; content: string; auth: string };
+  export type PutFileResp = Omit<File, 'id' | 'type'>;
+}

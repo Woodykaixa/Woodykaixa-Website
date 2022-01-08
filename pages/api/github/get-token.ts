@@ -1,52 +1,41 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CommonAPIErrorResponse } from '@/dto';
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<
-    | {
-        token: string;
-      }
-    | CommonAPIErrorResponse
-  >
-) {
-  if (req.method !== 'GET') {
-    res.status(400).json({
-      error: 'Unsupported method',
-      desc: 'get-token handler should be invoked by GET method',
-    });
-    return;
-  }
-  const code = req.query.code;
-  if (!code) {
-    throw new Error('code is required');
-  }
-  fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      code,
-      client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-    }),
-  })
+import type { CommonAPIErrorResponse, GetTokenDTO, GetTokenResp } from '@/dto';
+import { errorHandler } from '@/util/error';
+import { ensureMethod, parseParam } from '@/util/api';
+
+export default function handler(req: NextApiRequest, res: NextApiResponse<GetTokenResp | CommonAPIErrorResponse>) {
+  ensureMethod(req.method, ['GET'])
+    .then(() =>
+      parseParam<GetTokenDTO>(req.query, {
+        code: param => ({
+          valid: !!param && typeof param === 'string',
+          parsed: param!,
+        }),
+      })
+    )
+    .then(({ code }) => {
+      return fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+        }),
+      });
+    })
     .then(r => r.json())
     .then(json => {
       if (json.error) {
-        res.status(200).json({
-          error: json.error,
-          desc: json.error_description,
-        });
+        const err = new Error(json.error_description);
+        err.name = json.error;
+        throw err;
       } else {
         res.status(200).json(json);
       }
     })
-    .catch((err: Error) => {
-      res.status(400).json({
-        error: 'Error Occurred',
-        desc: err.message,
-      });
-    });
+    .catch(errorHandler(res));
 }

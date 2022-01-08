@@ -7,29 +7,23 @@ let client = new OSS(OssConfig);
 
 // old api
 export default function handler(req: NextApiRequest, res: NextApiResponse<{} | CommonAPIErrorResponse>) {
-  try {
-    ensureMethod(req.method, ['POST']);
-  } catch (e) {
-    const err = e as Error;
-    res.status(400).json({
-      error: err.name,
-      desc: err.message,
-    });
-  }
-  parseParam<PutFileDTO>(req.body, {
-    name: param => ({
-      valid: !!param,
-      parsed: firstValue(param!),
-    }),
-    content: param => ({
-      valid: !!param,
-      parsed: firstValue(param!),
-    }),
-    auth: param => ({
-      valid: process.env.APP_ENV === 'development' || !!param,
-      parsed: firstValue(param) ?? '',
-    }),
-  })
+  ensureMethod(req.method, ['POST'])
+    .then(() =>
+      parseParam<PutFileDTO>(req.body, {
+        name: param => ({
+          valid: !!param,
+          parsed: firstValue(param!),
+        }),
+        content: param => ({
+          valid: !!param,
+          parsed: firstValue(param!),
+        }),
+        auth: param => ({
+          valid: process.env.APP_ENV === 'development' || !!param,
+          parsed: firstValue(param) ?? '',
+        }),
+      })
+    )
     .then(param => {
       if (process.env.APP_ENV !== 'development' && param.auth !== process.env.OSS_PUT_AUTH) {
         throw new Error('');
