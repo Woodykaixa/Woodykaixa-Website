@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Oss, File, CommonAPIErrorResponse } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
-import { BadRequest, errorHandler } from '@/util/error';
+import { BadRequest, errorHandler, HttpError } from '@/util/error';
 import prismaClient from '@/lib/prisma';
 
 /**
@@ -56,24 +56,28 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
       }
       return dto;
     })
-    .then(dto =>
-      Promise.all([
-        dto,
-        fetch(process.env.NEXT_PUBLIC_BASE_URL + '/oss/put-file', {
-          method: 'POST',
-          headers: {
-            accept: 'application/json',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({
-            content: dto.content,
-            auth: dto.auth,
-            name: `${dto.type}/${dto.name}`,
-          } as Oss.PutFileDTO),
-        }),
-      ])
-    )
-    .then(([dto, res]) => Promise.all([dto, res.json() as Promise<Oss.PutFileResp>]))
+    .then(async dto => {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/oss/put-file', {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: dto.content,
+          auth: dto.auth,
+          name: `${dto.type}/${dto.name}`,
+        } as Oss.PutFileDTO),
+      });
+      const json = (await res.json()) as Oss.PutFileResp;
+      if (res.ok) {
+        return Promise.resolve([dto, json] as const);
+      }
+      const jErr = json as unknown as CommonAPIErrorResponse;
+      const err = new HttpError(jErr.desc, res.status);
+      err.name = jErr.error;
+      throw err;
+    })
     .then(([dto, putResult]) =>
       prismaClient.file.create({
         data: {
