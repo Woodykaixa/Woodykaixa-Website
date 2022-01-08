@@ -1,11 +1,15 @@
 import OSS from 'ali-oss';
 import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GetFileDTO, GetFileResp } from '@/dto';
+import { CommonAPIErrorResponse, GetFileDTO, GetFileResp } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 let client = new OSS(OssConfig);
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetFileResp>) {
+// old api
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<{ content: string } | CommonAPIErrorResponse>
+) {
   try {
     ensureMethod(req.method, ['GET']);
   } catch (e) {

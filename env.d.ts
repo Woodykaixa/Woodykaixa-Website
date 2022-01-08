@@ -23,3 +23,5 @@ declare global {
   // So we only use this global var in development mode
   var prisma: PrismaClient;
 }
+
+export {};
