@@ -9,7 +9,7 @@ const EditorPage: NextPage = () => {
   const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
   const [t, setT] = useState('');
   const get = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get-file?name=' + form.getFieldsValue().name)
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
       .then(async res => {
         if (res.status === OK.code) {
           return (await res.json()) as Oss.GetFileResp;
