@@ -7,7 +7,7 @@ import { User, GetUserInfoResp, Err } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 
-const ReadableErrorTexts: Record<Err.UserErrorType, { description: string; message: string }> = {
+const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
   'User exists': {
     description: '请直接登录',
     message: '该用户已注册',
