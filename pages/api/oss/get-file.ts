@@ -9,17 +9,15 @@ import prismaClient from '@/lib/prisma';
 export default function handler(req: NextApiRequest, res: NextApiResponse<Oss.GetFileResp | Err.CommonResp>) {
   prismaClient
     .$connect()
-    .then(() => {
-      return ensureMethod(req.method, ['GET']);
-    })
-    .then(() => {
-      return parseParam<Oss.GetFileDTO>(req.query, {
+    .then(() => ensureMethod(req.method, ['GET']))
+    .then(() =>
+      parseParam<Oss.GetFileDTO>(req.query, {
         name: param => ({
           valid: !!param,
           parsed: firstValue(param!),
         }),
-      });
-    })
+      })
+    )
     .then(param => {
       return prismaClient.file.findFirst({
         where: {
