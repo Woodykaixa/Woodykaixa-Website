@@ -1,9 +1,21 @@
-import { Upload, message, UploadProps } from 'antd';
+import { Upload as AntdUpload, message, UploadProps } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { FormInstance } from 'antd/lib/form/hooks/useForm';
 import { User } from '@/dto';
+import styled from 'styled-components';
+
+const Upload = styled(AntdUpload)`
+  display: flex;
+  justify-content: center;
+
+  & .ant-upload-select-picture-card {
+    width: auto;
+    height: auto;
+  }
+`;
+
 function getBase64(img: Blob) {
   return new Promise<string>(res => {
     const reader = new FileReader();
@@ -77,13 +89,7 @@ export function AvatarUploader(props: { img: string; width: number; height: numb
       onChange={handleChange}
     >
       {imageUrl ? (
-        <Image
-          src={imageUrl}
-          alt='avatar'
-          className='rounded-full'
-          height={props.height}
-          width={props.width}
-        ></Image>
+        <Image src={imageUrl} alt='avatar' className='rounded-full' height={props.height} width={props.width}></Image>
       ) : (
         <div>
           {loading ? <LoadingOutlined /> : <PlusOutlined />}

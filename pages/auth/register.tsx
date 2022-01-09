@@ -15,12 +15,21 @@ const ReadableErrorTexts: Record<Err.UserErrorType, { description: string; messa
 };
 
 const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
-  // useStateCheck(query.state);
+  useStateCheck(query.state);
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm<User.AddDTO>();
   const submit = (values: User.AddDTO) => {
     setUploading(true);
+    // const formData = new FormData();
+    // const avatarBuffer = Buffer.from(values.avatar.split(',')[1], 'base64');
 
+    // formData.append('github_id', values.github_id.toString(10));
+    // formData.append('email', values.email);
+    // formData.append('name', values.name);
+    // formData.append('password', values.password);
+    // formData.append('blog', values.blog ?? '');
+    // formData.append('bio', values.bio ?? '');
+    // formData.append('avatar', new Blob([new Uint8Array(avatarBuffer)]));
     console.log(values);
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/user/add', {
       method: 'POST',
@@ -84,7 +93,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
           }}
         >
           <div className='flex justify-center'>
-            <AvatarUploader img={query.avatar_url} width={150} height={150} form={form} />
+            <AvatarUploader img={query.avatar_url} width={250} height={250} form={form} />
             {/* <Image src={query.avatar_url} alt='avatar' width={100} height={100} className='rounded-full'></Image> */}
           </div>
         </Form.Item>
@@ -186,19 +195,19 @@ function useStateCheck(state: string) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  return {
-    props: {
-      login: 'Woodykaixa',
-      avatar_url: 'https://avatars.githubusercontent.com/u/22990333?v=4',
-      html_url: 'https://github.com/Woodykaixa',
-      company: 'Beijing University of Technology',
-      blog: 'https://woodykaixa.github.io',
-      location: 'Beijing',
-      email: '690750353@qq.com',
-      bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
-      id: 22990333,
-    },
-  };
+  // return {
+  //   props: {
+  //     login: 'Woodykaixa',
+  //     avatar_url: 'https://avatars.githubusercontent.com/u/22990333?v=4',
+  //     html_url: 'https://github.com/Woodykaixa',
+  //     company: 'Beijing University of Technology',
+  //     blog: 'https://woodykaixa.github.io',
+  //     location: 'Beijing',
+  //     email: '690750353@qq.com',
+  //     bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
+  //     id: 22990333,
+  //   },
+  // };
   const { query } = ctx;
   if (ctx.query.error) {
     return {
