@@ -1,42 +1,12 @@
 import { CommonAPIErrorResponse } from '@/dto/error';
+import { MethodNotAllowed } from '../error';
+export * from './parseParam';
 
-export function ensureMethod(actual: string | undefined, expect: string[]) {
+export async function ensureMethod(actual: string | undefined, expect: string[]): Promise<void> {
   if (!actual || !expect.includes(actual)) {
-    const err = new Error(`Expect: [${expect.join(', ')}], actual: ${actual}`);
-    err.name = 'Invalid Method';
-    throw err;
+    throw new MethodNotAllowed();
   }
-  console.log('method ensured');
-}
-
-type ParamType = string | string[];
-type ParserResult<T> = { valid: boolean; parsed: T } | Promise<{ valid: boolean; parsed: T }>;
-type SchemaType<HttpParamType extends object = {}> = {
-  [key in keyof HttpParamType]: (value?: ParamType) => ParserResult<HttpParamType[key]>;
-};
-export async function parseParam<HttpParamType extends object>(
-  param: { [key: string]: ParamType | undefined },
-  schema: SchemaType<HttpParamType>
-): Promise<HttpParamType> {
-  const expected = Object.keys(schema);
-  const result = {} as HttpParamType;
-  for (const key in param) {
-    if (!expected.includes(key)) {
-      continue;
-    }
-    const value = param[key];
-    const parser = schema[key as keyof typeof schema];
-    const { valid, parsed } = await parser(value);
-    if (!valid) {
-      const valueLiteral = !value ? 'null' : Array.isArray(value) ? `[${value.join(', ')}]` : value;
-      const err = new Error(`parse param ${key} failed: ${Array.isArray(valueLiteral)}`);
-      err.name = 'Invalid Parameter';
-      throw err;
-    }
-    result[key as keyof HttpParamType] = parsed;
-  }
-
-  return Promise.resolve(result);
+  return;
 }
 
 export function firstValue<T>(p: T | T[]) {
@@ -47,4 +17,16 @@ export function raiseError(errResp: CommonAPIErrorResponse) {
   const error = new Error(errResp.desc);
   error.name = errResp.error;
   throw error;
+}
+
+type TypeOfJson = 'array' | 'boolean' | 'number' | 'object' | 'string' | 'null';
+
+export function isType(param: any, type: TypeOfJson) {
+  if (type === 'null') {
+    return param === null;
+  }
+  if (type === 'array') {
+    return !!param && Array.isArray(param);
+  }
+  return !!param && typeof param === type;
 }

@@ -27,6 +27,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2
       styled-components: ^5.3.3
+      swr: ^1.1.2
       tailwindcss: ^3.0.8
       typescript: 4.5.4
     dependencies:
@@ -41,6 +42,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       styled-components: 5.3.3_react-dom@17.0.2+react@17.0.2
+      swr: 1.1.2_react@17.0.2
     devDependencies:
       '@types/ali-oss': 6.16.2
       '@types/bcrypt': 5.0.0
@@ -4736,6 +4738,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       has-flag: 4.0.0
+    dev: false
+
+  /swr/1.1.2_react@17.0.2:
+    resolution: {integrity: sha512-UsM0eo5T+kRPyWFZtWRx2XR5qzohs/LS4lDC0GCyLpCYFmsfTk28UCVDbOE9+KtoXY4FnwHYiF+ZYEU3hnJ1lQ==, tarball: swr/download/swr-1.1.2.tgz}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /tailwindcss/3.0.8_16a290f6d0e3717bf6d2667234aebd30:

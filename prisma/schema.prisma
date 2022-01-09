@@ -31,4 +31,109 @@ model User {
   bio       String?
   /// Is Admin. For now, there are only 1 admin, that's me!
   admin     Boolean
+
+  /// user's avatars, latest -> oldest
+  avatars   AvatarFile[] @relation
+  avatarIds String[]     @db.ObjectId
+  Comment   Comment[]
+}
+
+/// A file stored in OSS service.
+model File {
+
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+
+  /// Full filename
+  filename String @unique
+
+  /// url to access the file
+  url String
+
+  type FileType
+
+  /// File size in bytes
+  size Int
+
+  ImageFile  ImageFile[]
+  PostFile   PostFile[]
+  AvatarFile AvatarFile[]
+}
+
+model ImageFile {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+
+  /// basename and ext. Because full name is set in File model
+  filename String @unique
+
+  height Int
+
+  width Int
+
+  /// posts referenced this image
+  referencedBy PostFile[]
+
+  File   File   @relation(fields: [fileId], references: [id])
+  fileId String @db.ObjectId
+}
+
+// Because only I can publish posts, we don't need a userid field like example
+model PostFile {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+
+  /// The title of a post
+  title String
+
+  /// first paragraph or first 20 words of a post
+  brief String
+
+  /// cover image url
+  cover ImageFile @relation(fields: [coverImageId], references: [id])
+
+  coverImageId String @db.ObjectId
+
+  keywords String[]
+
+  /// When this post is uploaded
+  date DateTime
+
+  File   File   @relation(fields: [fileId], references: [id])
+  fileId String @db.ObjectId
+}
+
+model AvatarFile {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+
+  /// basename and ext. Because full name is set in File model
+  filename String @unique
+
+  height Int
+
+  width Int
+
+  File   File   @relation(fields: [fileId], references: [id])
+  fileId String @db.ObjectId
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+}
+
+enum FileType {
+  IMAGE
+  POST
+  AVATAR
+}
+
+model Comment {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+
+  /// content of this comment
+  content String
+
+  /// reply to another comment
+  replyCommentId String?   @db.ObjectId
+  replyTo        Comment?  @relation("replyComment", fields: [replyCommentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comments       Comment[] @relation("replyComment")
+
+  authorId String @db.ObjectId
+  author   User   @relation(fields: [authorId], references: [id])
 }

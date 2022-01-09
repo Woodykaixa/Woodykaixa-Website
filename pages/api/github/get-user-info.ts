@@ -1,24 +1,26 @@
-import { GetUserInfoResp, CommonAPIErrorResponse } from '@/dto';
+import { GetUserInfoResp, CommonAPIErrorResponse, GetUserInfoDTO } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { ensureMethod, parseParam } from '@/util/api';
+import { errorHandler } from '@/util/error';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | CommonAPIErrorResponse>) {
-  if (req.method !== 'GET') {
-    res.status(400).json({
-      error: 'Unsupported method',
-      desc: 'this handler should be invoked by GET method',
-    });
-    return;
-  }
-  const token = req.query.token;
-  if (!token) {
-    throw new Error('token is required');
-  }
-  fetch('https://api.github.com/user', {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `token ${token}`,
-    },
-  })
+  ensureMethod(req.method, ['GET'])
+    .then(() =>
+      parseParam<GetUserInfoDTO>(req.query, {
+        token: param => ({
+          valid: !!param && typeof param === 'string',
+          parsed: param!,
+        }),
+      })
+    )
+    .then(({ token }) =>
+      fetch('https://api.github.com/user', {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `token ${token}`,
+        },
+      })
+    )
     .then(r => r.json())
     .then(json => {
       console.log(json);
@@ -34,10 +36,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetUse
         id: json.id,
       });
     })
-    .catch((err: Error) => {
-      res.status(400).json({
-        error: 'Error Occurred',
-        desc: err.message,
-      });
-    });
+    .catch(errorHandler(res));
 }
