@@ -12,6 +12,7 @@ export namespace Err {
 
   export const File = {
     EXISTS: 'File exists',
+    NOT_EXISTS: 'File not exists',
   } as const;
 
   export type FileErrorType = typeof File[keyof typeof File];

@@ -52,7 +52,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
     )
     .then(([dto, file]) => {
       if (file) {
-        throw new BadRequest(`File exists`);
+        throw new BadRequest(Err.File.EXISTS);
       }
       return dto;
     })

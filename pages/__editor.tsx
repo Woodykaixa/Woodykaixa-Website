@@ -3,10 +3,10 @@ import { Input, Typography, Button, Form } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 import { useState } from 'react';
-import { OK, Oss } from '@/dto';
+import { File, OK, Oss } from '@/dto';
 
 const EditorPage: NextPage = () => {
-  const [form] = Form.useForm<{ name: string; content: string }>();
+  const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
   const [t, setT] = useState('');
   const get = () => {
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get-file?name=' + form.getFieldsValue().name)
@@ -26,12 +26,12 @@ const EditorPage: NextPage = () => {
   };
 
   const put = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/put-file', {
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-file', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...form.getFieldsValue(), encoding: 'utf8' }),
+      body: JSON.stringify({ ...form.getFieldsValue(), encoding: 'utf8', type: 'POST' } as File.PutFileDTO),
     }).then(() => {
       setT(form.getFieldsValue().content);
     });
