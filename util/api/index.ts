@@ -1,4 +1,4 @@
-import { CommonAPIErrorResponse } from '@/dto/error';
+import { Err } from '@/dto';
 import { MethodNotAllowed } from '../error';
 export * from './parseParam';
 
@@ -13,7 +13,7 @@ export function firstValue<T>(p: T | T[]) {
   return Array.isArray(p) ? p[0] : p;
 }
 
-export function raiseError(errResp: CommonAPIErrorResponse) {
+export function raiseError(errResp: Err.CommonResp) {
   const error = new Error(errResp.desc);
   error.name = errResp.error;
   throw error;
