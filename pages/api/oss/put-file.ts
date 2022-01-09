@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Err, Oss } from '@/dto';
+import { Err, OK, Oss } from '@/dto';
 import { ensureMethod, parseParam, isType } from '@/util/api';
 import { errorHandler } from '@/util/error';
 import ossClient from '@/lib/oss';
@@ -29,10 +29,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Oss.Pu
     .then(param => ossClient.put(param.name, Buffer.from(param.content, param.encoding)))
     .then(result => {
       console.log(result);
-      if (result.res.status !== 200) {
+      if (result.res.status !== OK.code) {
         throw new Error(result.res.status.toString(10));
       }
-      res.status(200).json({
+      res.status(OK.code).json({
         filename: result.name,
         url: result.url,
         size: result.res.size,

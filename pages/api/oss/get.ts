@@ -1,15 +1,12 @@
 import OSS from 'ali-oss';
 import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { CommonAPIErrorResponse, GetFileDTO, GetFileResp } from '@/dto';
+import { Err, OK } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 let client = new OSS(OssConfig);
 
 // old api
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<{ content: string } | CommonAPIErrorResponse>
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<{ content: string } | Err.CommonResp>) {
   ensureMethod(req.method, ['GET'])
     .then(() => {
       return parseParam<{ name: string }>(req.query, {
@@ -25,7 +22,7 @@ export default function handler(
     .then(result => {
       console.log(result);
 
-      res.status(200).json({ content: result.content.toString() });
+      res.status(OK.code).json({ content: result.content.toString() });
     })
     .catch((err: Error) => {
       res.status(400).json({

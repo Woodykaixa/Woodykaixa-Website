@@ -1,11 +1,21 @@
 import OSS from 'ali-oss';
 import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ListFilesResp } from '@/dto';
+import { Err } from '@/dto';
 import { errorHandler } from '@/util/error';
 let client = new OSS(OssConfig);
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<ListFilesResp>) {
+// old api
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<
+    | Array<{
+        path: string;
+        type: string;
+      }>
+    | Err.CommonResp
+  >
+) {
   client
     .list(
       {

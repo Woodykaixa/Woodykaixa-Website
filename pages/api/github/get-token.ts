@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CommonAPIErrorResponse, GetTokenDTO, GetTokenResp } from '@/dto';
+import { Err, GetTokenDTO, GetTokenResp, OK } from '@/dto';
 import { errorHandler } from '@/util/error';
 import { ensureMethod, parseParam } from '@/util/api';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetTokenResp | CommonAPIErrorResponse>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<GetTokenResp | Err.CommonResp>) {
   ensureMethod(req.method, ['GET'])
     .then(() =>
       parseParam<GetTokenDTO>(req.query, {
@@ -34,7 +34,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetTok
         err.name = json.error;
         throw err;
       } else {
-        res.status(200).json(json);
+        res.status(OK.code).json(json);
       }
     })
     .catch(errorHandler(res));

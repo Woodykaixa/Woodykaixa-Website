@@ -1,5 +1,3 @@
-import { CommonAPIErrorResponse } from '.';
-
 export type GitHubGetUsersDTO = {
   login: string;
   id: number;

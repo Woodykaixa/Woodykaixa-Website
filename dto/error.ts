@@ -1,5 +1,3 @@
-export type CommonAPIErrorResponse = Err.CommonResp;
-
 export namespace Err {
   export type CommonResp = {
     error: string;

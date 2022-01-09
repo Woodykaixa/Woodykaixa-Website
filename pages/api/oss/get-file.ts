@@ -1,19 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GetFileDTO, GetFileResp } from '@/dto';
+import { Err, OK, Oss } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
-import { BadRequest, HttpError, NotFound, errorHandler } from '@/util/error';
+import { BadRequest, NotFound, errorHandler } from '@/util/error';
 
 import ossClient from '@/lib/oss';
 import prismaClient from '@/lib/prisma';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetFileResp>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Oss.GetFileResp | Err.CommonResp>) {
   prismaClient
     .$connect()
     .then(() => {
       return ensureMethod(req.method, ['GET']);
     })
     .then(() => {
-      return parseParam<GetFileDTO>(req.query, {
+      return parseParam<Oss.GetFileDTO>(req.query, {
         name: param => ({
           valid: !!param,
           parsed: firstValue(param!),
@@ -34,10 +34,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetFil
       return Promise.all([Promise.resolve(file), ossClient.get(file.filename)]);
     })
     .then(([file, result]) => {
-      if (result.res.status !== 200) {
+      if (result.res.status !== OK.code) {
         throw new BadRequest(result.res.status.toString(10));
       }
-      res.status(200).json({
+      res.status(OK.code).json({
         ...file,
         content: result.content.toString(),
       });

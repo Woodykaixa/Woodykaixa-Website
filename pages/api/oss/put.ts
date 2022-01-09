@@ -1,12 +1,12 @@
 import OSS from 'ali-oss';
 import { OssConfig } from '@/config/oss';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PutFileDTO, CommonAPIErrorResponse } from '@/dto';
+import { PutFileDTO, Err, OK } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 let client = new OSS(OssConfig);
 
 // old api
-export default function handler(req: NextApiRequest, res: NextApiResponse<{} | CommonAPIErrorResponse>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<{} | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
     .then(() =>
       parseParam<PutFileDTO>(req.body, {
@@ -33,7 +33,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<{} | C
     .then(result => {
       console.log(result);
 
-      res.status(200).json({});
+      res.status(OK.code).json({});
     })
     .catch((err: Error) => {
       res.status(400).json({
