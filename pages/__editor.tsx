@@ -26,7 +26,7 @@ const EditorPage: NextPage = () => {
   };
 
   const put = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-file', {
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
