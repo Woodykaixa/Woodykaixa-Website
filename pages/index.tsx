@@ -51,7 +51,7 @@ type ServerSideProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
-  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get-file?name=POST/README.md');
+  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=POST/README.md');
   const json = await (result.json() as Promise<Oss.GetFileResp>);
   const jErr = json as unknown as Err.CommonResp;
   if (jErr.error) {

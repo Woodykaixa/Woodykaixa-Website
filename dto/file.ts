@@ -1,4 +1,4 @@
-import { FileType, File as FileModel } from '@prisma/client';
+import { FileType as FileModelType, File as FileModel } from '@prisma/client';
 import { Simplify } from '@/util/type';
 
 export namespace File {
@@ -9,4 +9,5 @@ export namespace File {
   export type PutFileResp = Simplify<FileModel>;
 
   export const FileTypes: Array<FileType> = ['POST', 'IMAGE', 'AVATAR'];
+  export type FileType = FileModelType;
 }

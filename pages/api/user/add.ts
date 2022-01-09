@@ -5,6 +5,7 @@ import { ensureMethod, parseParam, firstValue, isType } from '@/util/api';
 import bcrypt from 'bcrypt';
 import { BadRequest, HttpError, errorHandler } from '@/util/error';
 import { SiteConfig } from '@/config/site';
+import { UserService, AvatarService } from '@/lib/services';
 
 /**
  * POST /api/user/add
@@ -55,62 +56,32 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
       })
     )
     .then(async dto => {
-      const user = await prismaClient.user.findFirst({
-        where: {
-          github_id: dto.github_id,
-        },
-      });
+      const user = await UserService.findByGitHubId(prismaClient, dto.github_id);
+
       if (user) {
         throw new BadRequest(Err.User.EXISTS);
       }
+      const newUser = await UserService.createUser(
+        prismaClient,
+        dto.github_id,
+        dto.email,
+        dto.name,
+        dto.password,
+        [],
+        dto.blog,
+        dto.bio
+      );
+      const avatarBuffer = Buffer.from(dto.avatar.split(',')[1], 'base64');
+      const avatar = await AvatarService.putAvatar(
+        prismaClient,
+        `${newUser.name}-avatar-${newUser.avatarIds.length}`,
+        avatarBuffer,
+        SiteConfig.avatarSize,
+        SiteConfig.avatarSize,
+        newUser.id
+      );
 
-      const salt = bcrypt.genSaltSync();
-      const password = bcrypt.hashSync(dto.password, salt);
-      const newUser = await prismaClient.user.create({
-        data: {
-          github_id: dto.github_id,
-          email: dto.email,
-          name: dto.name,
-          blog: dto.blog,
-          bio: dto.bio,
-          admin: false,
-          password,
-          salt,
-          avatarIds: [],
-        },
-      });
-
-      const avatarPutResp = await fetch(SiteConfig.Url + '/api/avatar/put', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-        },
-        body: JSON.stringify({
-          auth: process.env.OSS_PUT_AUTH,
-          content: dto.avatar.split(',')[1],
-          filename: dto.name + '-avatar-01',
-          height: SiteConfig.avatarSize,
-          width: SiteConfig.avatarSize,
-          userId: newUser.id,
-        } as Avatar.PutDTO),
-      });
-      const avatarPutResult = (await avatarPutResp.json()) as Avatar.PutResp;
-      if (avatarPutResp.status !== OK.code) {
-        const jErr = avatarPutResult as unknown as Err.CommonResp;
-        const err = new HttpError(jErr.desc, avatarPutResp.status);
-        err.name = jErr.error;
-        throw err;
-      }
-
-      return prismaClient.user.update({
-        where: {
-          id: newUser.id,
-        },
-        data: {
-          avatarIds: [avatarPutResult.id],
-        },
-      });
+      return UserService.setUserAvatar(prismaClient, newUser.id, avatar.id);
     })
     .then(user => {
       console.log('created a user:', user);
