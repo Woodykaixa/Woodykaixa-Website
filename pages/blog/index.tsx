@@ -1,5 +1,4 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { ListFilesResp } from '@/dto';
 const Blog: NextPage<{
   files: Array<{ path: string; type: string }>;
 }> = ({ files }) => {
@@ -23,8 +22,12 @@ const Blog: NextPage<{
 export default Blog;
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/list-files');
-  const json: ListFilesResp = await response.json();
+  const json = [
+    {
+      path: 'README.md',
+      type: 'markdown',
+    },
+  ];
   if (Array.isArray(json)) {
     return {
       props: {
