@@ -1,32 +1,45 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Form, Input, Button, notification } from 'antd';
-import Image from 'next/image';
 import { GitHubState } from '@/util';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { raiseError } from '@/util/api';
-import { CreateUserDTO, GetUserInfoResp, CreateUserResp, CommonAPIErrorResponse } from '@/dto';
+import { User, GetUserInfoResp, Err } from '@/dto';
+import { AvatarUploader } from '@/components/AvatarUploader';
+import { HttpError } from '@/util/error';
+
+const ReadableErrorTexts: Record<Err.UserErrorType, { description: string; message: string }> = {
+  'User exists': {
+    description: '请直接登录',
+    message: '该用户已注册',
+  },
+};
 
 const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
-  useStateCheck(query.state);
+  // useStateCheck(query.state);
   const [uploading, setUploading] = useState(false);
-  const [form] = Form.useForm<CreateUserDTO>();
-  const submit = () => {
+  const [form] = Form.useForm<User.AddDTO>();
+  const submit = (values: User.AddDTO) => {
     setUploading(true);
-    const body = form.getFieldsValue();
+
+    console.log(values);
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/user/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(values),
     })
-      .then(res => res.json())
-      .then((result: CreateUserResp) => {
-        // ugly fix type error, but why?
-        if ((result as CommonAPIErrorResponse).error) {
-          raiseError(result as any);
+      .then(async res => {
+        const json = await res.json();
+        if (res.ok) {
+          return json as User.AddResp;
         }
+        const jErr = json as Err.CommonResp;
+        const err = new HttpError(jErr.desc, res.status);
+        err.name = jErr.error;
+        throw err;
+      })
+      .then(result => {
         notification.success({
           message: '注册成功',
           description: '一起来玩吧!',
@@ -34,10 +47,12 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         console.log('register result', result);
       })
       .catch((err: Error) => {
-        notification.error({
+        const notificationTexts = ReadableErrorTexts[err.message as Err.UserErrorType] ?? {
           message: err.name,
           description: err.message,
-        });
+        };
+        console.error(err);
+        notification.error(notificationTexts);
       })
       .finally(() => {
         setUploading(false);
@@ -59,10 +74,18 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
           github_id: query.id,
         }}
         form={form}
+        onFinish={submit}
       >
-        <Form.Item className='flex justify-center'>
+        <Form.Item
+          className='flex justify-center'
+          name='avatar'
+          getValueFromEvent={(...args) => {
+            console.log(...args);
+          }}
+        >
           <div className='flex justify-center'>
-            <Image src={query.avatar_url} alt='avatar' width={100} height={100} className='rounded-full'></Image>
+            <AvatarUploader img={query.avatar_url} width={150} height={150} form={form} />
+            {/* <Image src={query.avatar_url} alt='avatar' width={100} height={100} className='rounded-full'></Image> */}
           </div>
         </Form.Item>
         <Form.Item
@@ -136,7 +159,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 16, span: 8 }}>
-          <Button type='primary' onClick={submit} loading={uploading}>
+          <Button type='primary' htmlType='submit' loading={uploading}>
             立即注册
           </Button>
         </Form.Item>
@@ -163,19 +186,19 @@ function useStateCheck(state: string) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  // return {
-  //   props: {
-  //     login: 'Woodykaixa',
-  //     avatar_url: 'https://avatars.githubusercontent.com/u/22990333?v=4',
-  //     html_url: 'https://github.com/Woodykaixa',
-  //     company: 'Beijing University of Technology',
-  //     blog: 'https://woodykaixa.github.io',
-  //     location: 'Beijing',
-  //     email: '690750353@qq.com',
-  //     bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
-  //     id: 22990333,
-  //   },
-  // };
+  return {
+    props: {
+      login: 'Woodykaixa',
+      avatar_url: 'https://avatars.githubusercontent.com/u/22990333?v=4',
+      html_url: 'https://github.com/Woodykaixa',
+      company: 'Beijing University of Technology',
+      blog: 'https://woodykaixa.github.io',
+      location: 'Beijing',
+      email: '690750353@qq.com',
+      bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
+      id: 22990333,
+    },
+  };
   const { query } = ctx;
   if (ctx.query.error) {
     return {

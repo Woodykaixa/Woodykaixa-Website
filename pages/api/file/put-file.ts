@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Oss, File, CommonAPIErrorResponse } from '@/dto';
+import { Oss, File, Err, OK } from '@/dto';
 import { ensureMethod, parseParam, firstValue } from '@/util/api';
 import { BadRequest, errorHandler, HttpError } from '@/util/error';
 import prismaClient from '@/lib/prisma';
@@ -15,7 +15,7 @@ import prismaClient from '@/lib/prisma';
  * invoke /api/oss/put-file, upload file to OSS, and create a File document in db.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<File.PutFileResp | CommonAPIErrorResponse>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<File.PutFileResp | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
     .then(() =>
       parseParam<File.PutFileDTO>(req.body, {
@@ -57,7 +57,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
       return dto;
     })
     .then(async dto => {
-      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/oss/put-file', {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/put-file', {
         method: 'POST',
         headers: {
           accept: 'application/json',
@@ -67,13 +67,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
           content: dto.content,
           auth: dto.auth,
           name: `${dto.type}/${dto.name}`,
+          encoding: dto.type === 'POST' ? 'utf8' : 'base64',
         } as Oss.PutFileDTO),
       });
       const json = (await res.json()) as Oss.PutFileResp;
-      if (res.ok) {
+      if (res.status === OK.code) {
         return Promise.resolve([dto, json] as const);
       }
-      const jErr = json as unknown as CommonAPIErrorResponse;
+      const jErr = json as unknown as Err.CommonResp;
       const err = new HttpError(jErr.desc, res.status);
       err.name = jErr.error;
       throw err;
@@ -87,7 +88,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
       })
     )
     .then(file => {
-      res.status(200).json(file);
+      res.status(OK.code).json(file);
     })
     .catch(errorHandler(res));
 }

@@ -1,4 +1,3 @@
-import { CommonAPIErrorResponse } from '.';
 import { AvatarFile } from '@prisma/client';
 import { File } from './file';
 import { Simplify } from '@/util/type';

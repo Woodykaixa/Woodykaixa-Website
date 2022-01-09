@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Avatar, File, CommonAPIErrorResponse } from '@/dto';
-import { ensureMethod, parseParam, firstValue, isType } from '@/util/api';
-import { BadRequest, errorHandler, HttpError } from '@/util/error';
+import { Avatar, File, OK, Err } from '@/dto';
+import { ensureMethod, parseParam, isType } from '@/util/api';
+import { errorHandler, HttpError } from '@/util/error';
 import prismaClient from '@/lib/prisma';
 import { SiteConfig } from '@/config/site';
 
@@ -15,7 +15,7 @@ import { SiteConfig } from '@/config/site';
  * @description Upload a avatar file. Just invoke /api/file/put-file, and specify type='AVATAR', then add a AvatarFile model in db.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Avatar.PutResp | CommonAPIErrorResponse>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Avatar.PutResp | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
     .then(() =>
       parseParam<Avatar.PutDTO>(req.body, {
@@ -73,10 +73,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Avatar
         } as File.PutFileDTO),
       });
       const json = (await res.json()) as File.PutFileResp;
-      if (res.ok) {
-        return Promise.resolve([dto, json] as const);
+      if (res.status === OK.code) {
+        return [dto, json] as const;
       }
-      const jErr = json as unknown as CommonAPIErrorResponse;
+      const jErr = json as unknown as Err.CommonResp;
       const err = new HttpError(jErr.desc, res.status);
       err.name = jErr.error;
       throw err;
@@ -93,7 +93,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Avatar
       });
     })
     .then(avatar => {
-      res.status(200).json(avatar);
+      res.status(OK.code).json(avatar);
     })
     .catch(errorHandler(res));
 }

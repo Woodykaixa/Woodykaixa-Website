@@ -1,31 +1,32 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PutFileDTO, PutFileResp } from '@/dto';
-import { ensureMethod, parseParam, firstValue } from '@/util/api';
+import { Err, Oss } from '@/dto';
+import { ensureMethod, parseParam, isType } from '@/util/api';
 import { errorHandler } from '@/util/error';
 import ossClient from '@/lib/oss';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<PutFileResp>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Oss.PutFileResp | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
     .then(() =>
-      parseParam<PutFileDTO>(req.body, {
+      parseParam<Oss.PutFileDTO>(req.body, {
         name: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
+          valid: isType(param, 'string') && param!.length > 0,
+          parsed: param!,
         }),
         content: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
+          valid: isType(param, 'string') && param!.length > 0,
+          parsed: param!,
         }),
-        auth: param => {
-          const auth = firstValue(param) ?? '';
-          return {
-            valid: auth === process.env.OSS_PUT_AUTH,
-            parsed: auth,
-          };
-        },
+        auth: param => ({
+          valid: isType(param, 'string') && param === process.env.OSS_PUT_AUTH,
+          parsed: param!,
+        }),
+        encoding: param => ({
+          valid: isType(param, 'string') && Oss.OssFileEncodings.includes(param!),
+          parsed: param!,
+        }),
       })
     )
-    .then(param => ossClient.put(param.name, Buffer.from(param.content, 'utf-8')))
+    .then(param => ossClient.put(param.name, Buffer.from(param.content, param.encoding)))
     .then(result => {
       console.log(result);
       if (result.res.status !== 200) {
