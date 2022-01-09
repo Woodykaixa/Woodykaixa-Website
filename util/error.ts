@@ -1,5 +1,5 @@
+import { Err } from '@/dto';
 import { NextApiResponse } from 'next';
-import { CommonAPIErrorResponse } from '@/dto';
 export class HttpError extends Error {
   public readonly code: number;
   constructor(message: string, code: number) {
@@ -30,7 +30,7 @@ export class MethodNotAllowed extends HttpError {
   }
 }
 
-export function errorHandler(response: NextApiResponse<CommonAPIErrorResponse>) {
+export function errorHandler(response: NextApiResponse<Err.CommonResp>) {
   return function (err: any) {
     if (err instanceof Error) {
       response.status(err instanceof HttpError ? err.code : 500).json({
