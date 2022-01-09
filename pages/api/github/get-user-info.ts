@@ -1,9 +1,9 @@
-import { GetUserInfoResp, CommonAPIErrorResponse, GetUserInfoDTO } from '@/dto';
+import { GetUserInfoResp, GetUserInfoDTO, Err, OK } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ensureMethod, parseParam } from '@/util/api';
 import { errorHandler } from '@/util/error';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | CommonAPIErrorResponse>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | Err.CommonResp>) {
   ensureMethod(req.method, ['GET'])
     .then(() =>
       parseParam<GetUserInfoDTO>(req.query, {
@@ -24,7 +24,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<GetUse
     .then(r => r.json())
     .then(json => {
       console.log(json);
-      res.status(200).json({
+      res.status(OK.code).json({
         login: json.login,
         avatar_url: json.avatar_url,
         html_url: json.html_url,

@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { notification, Alert } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
-import { CommonAPIErrorResponse, GetFileResp } from '@/dto';
+import { Err, Oss } from '@/dto';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 
@@ -51,9 +51,9 @@ type ServerSideProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
-  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get?name=README.md');
-  const json = await (result.json() as Promise<GetFileResp>);
-  const jErr = json as CommonAPIErrorResponse;
+  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=README.md');
+  const json = await (result.json() as Promise<Oss.GetFileResp>);
+  const jErr = json as unknown as Err.CommonResp;
   if (jErr.error) {
     return {
       props: {

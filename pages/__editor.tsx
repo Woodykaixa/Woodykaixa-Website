@@ -3,28 +3,35 @@ import { Input, Typography, Button, Form } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 import { useState } from 'react';
+import { File, OK, Oss } from '@/dto';
 
-const Me: NextPage = () => {
-  const [form] = Form.useForm<{ name: string; content: string }>();
+const EditorPage: NextPage = () => {
+  const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
   const [t, setT] = useState('');
   const get = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/get?name=' + form.getFieldsValue().name)
-      .then(res => res.json())
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
+      .then(async res => {
+        if (res.status === OK.code) {
+          return (await res.json()) as Oss.GetFileResp;
+        }
+        throw new Error('');
+      })
       .then(json => {
         form.setFieldsValue({
           content: json.content,
         });
         setT(json.content);
-      });
+      })
+      .catch(console.error);
   };
 
   const put = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/oss/put', {
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(form.getFieldsValue()),
+      body: JSON.stringify({ ...form.getFieldsValue(), encoding: 'utf8', type: 'POST' } as File.PutFileDTO),
     }).then(() => {
       setT(form.getFieldsValue().content);
     });
@@ -63,4 +70,4 @@ const Me: NextPage = () => {
   );
 };
 
-export default Me;
+export default EditorPage;

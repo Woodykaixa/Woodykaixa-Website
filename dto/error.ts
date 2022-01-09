@@ -1,5 +1,3 @@
-export type CommonAPIErrorResponse = Err.CommonResp;
-
 export namespace Err {
   export type CommonResp = {
     error: string;
@@ -8,12 +6,14 @@ export namespace Err {
 
   export const User = {
     EXISTS: 'User exists',
+    NOT_EXISTS: 'User not exists',
   } as const;
 
   export type UserErrorType = typeof User[keyof typeof User];
 
   export const File = {
     EXISTS: 'File exists',
+    NOT_EXISTS: 'File not exists',
   } as const;
 
   export type FileErrorType = typeof File[keyof typeof File];

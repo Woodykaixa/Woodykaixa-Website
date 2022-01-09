@@ -1,19 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Oss, File, Err, OK } from '@/dto';
+import { File, Err, OK } from '@/dto';
 import { ensureMethod, parseParam, firstValue, isType } from '@/util/api';
-import { BadRequest, errorHandler, HttpError } from '@/util/error';
+import { errorHandler, HttpError } from '@/util/error';
 import prismaClient from '@/lib/prisma';
-import { FileService } from '@/lib/services';
-/**
- * POST /api/file/put-file
- *
- * param [File.PutFileDTO]
- *
- * response [File.PutFileResp]
- *
- * @description Upload a file. Firstly, check if the filename exists in db. If does, throw a error. Otherwise
- * invoke /api/oss/put-file, upload file to OSS, and create a File document in db.
- */
+import { FileService, OssService } from '@/lib/services';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<File.PutFileResp | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
@@ -40,7 +30,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<File.P
     .then(async param => {
       console.log(param.auth);
       const bufferEncoding = param.type === 'POST' ? 'utf8' : 'base64';
-      return FileService.putFile(prismaClient, param.name, Buffer.from(param.content, bufferEncoding), param.type);
+      const content = Buffer.from(param.content, bufferEncoding);
+      const file = await prismaClient.file.findFirst({
+        where: {
+          filename: `${param.type}/${param.name}`,
+        },
+      });
+      if (!file) {
+        return FileService.putFile(prismaClient, param.name, content, param.type);
+      } else {
+        await OssService.putFile(`${param.type}/${param.name}`, content);
+      }
+      return file;
     })
     .then(file => {
       res.status(OK.code).json(file);
