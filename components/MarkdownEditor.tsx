@@ -9,11 +9,19 @@ export type MarkdownEditorProps = {
   editorRows?: number;
   className?: string;
   editorClassName?: string;
+  value: string;
+  updateValue: (value: string) => void;
 };
 type TabType = 'text' | 'preview';
-export function MarkdownEditor({ editable = true, editorRows = 10, className, editorClassName }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  editable = true,
+  editorRows = 10,
+  className,
+  editorClassName,
+  value,
+  updateValue,
+}: MarkdownEditorProps) {
   const [tab, setTab] = useState<TabType>('text');
-  const [content, setContent] = useThrottledInput('', 500);
   return (
     <div className={className}>
       <Menu
@@ -32,15 +40,15 @@ export function MarkdownEditor({ editable = true, editorRows = 10, className, ed
           disabled={!editable}
           autoSize={{ maxRows: 20 }}
           className={`resize-none min-h-40 ${editorClassName ?? ''}`}
-          value={content}
+          value={value}
           onChange={e => {
-            setContent(e.target.value);
+            updateValue(e.target.value);
           }}
         />
       )}
       {tab === 'preview' && (
         <div className='bg-white px-4 min-h-40'>
-          <Markdown options={MarkdownOptions}>{content}</Markdown>
+          <Markdown options={MarkdownOptions}>{value}</Markdown>
         </div>
       )}
     </div>

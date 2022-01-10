@@ -5,10 +5,11 @@ import { MarkdownOptions } from '@/config/markdown';
 import { useState } from 'react';
 import { File, OK, Oss } from '@/dto';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
+import { useThrottledInput } from '@/util/hooks';
 
 const EditorPage: NextPage = () => {
   const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
-  const [t, setT] = useState('');
+  const [content, setContent] = useThrottledInput('', 500);
   const get = () => {
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
       .then(async res => {
@@ -21,7 +22,7 @@ const EditorPage: NextPage = () => {
         form.setFieldsValue({
           content: json.content,
         });
-        setT(json.content);
+        setContent(json.content);
       })
       .catch(console.error);
   };
@@ -32,9 +33,12 @@ const EditorPage: NextPage = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...form.getFieldsValue(), encoding: 'utf8', type: 'POST' } as File.PutFileDTO),
-    }).then(() => {
-      setT(form.getFieldsValue().content);
+      body: JSON.stringify({
+        ...form.getFieldsValue(),
+        encoding: 'utf8',
+        type: 'POST',
+        content: content,
+      } as File.PutFileDTO),
     });
   };
 
@@ -59,7 +63,7 @@ const EditorPage: NextPage = () => {
           <Button onClick={put}>post</Button>
         </Form.Item>
         <div className='h-10'></div>
-        <MarkdownEditor></MarkdownEditor>
+        <MarkdownEditor value={content} updateValue={setContent}></MarkdownEditor>
       </Form>
     </div>
   );
