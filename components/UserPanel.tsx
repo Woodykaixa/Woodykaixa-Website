@@ -6,25 +6,20 @@ import { GitHubAPI, GitHubState } from '../util/github';
 export function UserPanel() {
   return (
     <div className='w-60 bg-white rounded-lg shadow-md p-4 flex flex-col items-center'>
-      <p>您尚未登录。可以浏览文章，但是评论功能不可用。</p>
-      <p>请登录以体验{SiteConfig.title}的全部功能。</p>
-      <div className='flex flex-col items-center w-full px-2'>
-        <Button type='primary' className='w-full'>
-          点击登录
-        </Button>
-        <div>或</div>
-        <Button
-          className='w-full'
-          onClick={() => {
-            const state = GitHubState.get();
-            const a = document.createElement('a');
-            a.href = GitHubAPI.registerUrl(state);
-            a.click();
-          }}
-        >
-          使用 GitHub 账号注册
-        </Button>
-      </div>
+      <p>您尚未登录。即便如此，您依然可以浏览{SiteConfig.title}的全部内容。</p>
+      <p>本站的用户系统基于 GitHub 的 OAuth2 授权机制，仅用于添加友情链接和评论时的非机器人验证。</p>
+      <Button
+        className='w-full'
+        type='primary'
+        onClick={() => {
+          const state = GitHubState.get();
+          const a = document.createElement('a');
+          a.href = GitHubAPI.registerUrl(state);
+          a.click();
+        }}
+      >
+        使用 GitHub 账号登录
+      </Button>
     </div>
   );
 }
