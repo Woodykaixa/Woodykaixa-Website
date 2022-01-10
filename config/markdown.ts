@@ -2,6 +2,7 @@ import { Typography } from 'antd';
 const { Text, Title, Paragraph, Link } = Typography;
 import { MarkdownToJSX } from 'markdown-to-jsx';
 import { Hidden, Title as MyTitle } from '@/components/markdown';
+import { Comment } from '@/components/markdown/Comment';
 export const MarkdownOptions: MarkdownToJSX.Options = {
   wrapper: Typography,
   overrides: {
@@ -53,8 +54,11 @@ export const MarkdownOptions: MarkdownToJSX.Options = {
     br: {
       component: Paragraph,
     },
-    Hidden: {
+    hid: {
       component: Hidden,
+    },
+    cmt: {
+      component: Comment,
     },
   },
 };
