@@ -6,6 +6,7 @@ import { SiteConfig } from '@/config/site';
 import { Err, Oss } from '@/dto';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
+import { CommentList } from '@/components/CommentList';
 
 const Home: NextPage<ServerSideProps> = props => {
   useEffect(() => {
@@ -37,7 +38,10 @@ const Home: NextPage<ServerSideProps> = props => {
           type='warning'
           closable
         />
-        <Markdown options={MarkdownOptions}>{props.err_or_content}</Markdown>
+        <div className='flex flex-col w-3/4 items-center'>
+          <Markdown options={MarkdownOptions}>{props.err_or_content}</Markdown>
+          <CommentList />
+        </div>
       </div>
     </>
   );
