@@ -1,16 +1,21 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Alert } from 'antd';
 import { GitHubState } from '@/util';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { User, GetUserInfoResp, Err } from '@/dto';
+import { User, GetUserInfoResp, Err, OK } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
+import { SiteConfig } from '@/config/site';
 
 const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
   'User exists': {
     description: '请直接登录',
     message: '该用户已注册',
+  },
+  'Email exists': {
+    description: '请直接登录',
+    message: '该邮箱已被注册',
   },
 };
 
@@ -56,7 +61,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         console.log('register result', result);
       })
       .catch((err: Error) => {
-        const notificationTexts = ReadableErrorTexts[err.message as Err.UserErrorType] ?? {
+        const notificationTexts = ReadableErrorTexts[err.message] ?? {
           message: err.name,
           description: err.message,
         };
@@ -69,7 +74,14 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
   };
 
   return (
-    <div className='bg-white p-8 mt-16 mx-8 flex justify-center'>
+    <div className='bg-white p-8 mt-16 mx-8 flex flex-col items-center justify-center'>
+      <Alert
+        message='我需要现在注册吗？'
+        description='即使未注册用户也可以浏览本站的全部内容，只有需要评论以及添加友链时才需要注册。'
+        type='info'
+        showIcon
+        closable
+      />
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
@@ -218,7 +230,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     };
   }
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/github/get-token?code=' + query.code);
+    const response = await fetch(SiteConfig.url + '/api/github/get-token?code=' + query.code);
     const json = await response.json();
     console.log(json);
     if (json.error) {
@@ -229,9 +241,24 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         },
       };
     }
-    const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/github/get-user-info?token=' + json.access_token);
+    const res = await fetch(SiteConfig.url + '/api/github/get-user-info?token=' + json.access_token);
     const user_info = await res.json();
     console.log('res', user_info);
+    const getUserResp = await fetch(SiteConfig.url + '/api/user/get?githubId=' + user_info.id, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
+    const user = (await getUserResp.json()) as User.GetDTO;
+    console.log('user', user);
+    if (getUserResp.status === OK.code) {
+      return {
+        redirect: {
+          destination: '/auth/login',
+          permanent: false,
+        },
+      };
+    }
     return {
       props: { ...user_info, state: ctx.query.state },
     };

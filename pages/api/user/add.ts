@@ -56,12 +56,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
       })
     )
     .then(async dto => {
-      const user = await UserService.findByGitHubId(prismaClient, dto.github_id);
+      {
+        const user = await UserService.findByGitHubId(prismaClient, dto.github_id);
 
-      if (user) {
-        throw new BadRequest(Err.User.EXISTS);
+        if (user) {
+          throw new BadRequest(Err.User.EXISTS);
+        }
       }
-      const newUser = await UserService.createUser(
+      {
+        const user = await UserService.findByEmail(prismaClient, dto.email);
+
+        if (user) {
+          throw new BadRequest(Err.Email.EXISTS);
+        }
+      }
+
+      const user = await UserService.createUser(
         prismaClient,
         dto.github_id,
         dto.email,
@@ -74,14 +84,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
       const avatarBuffer = Buffer.from(dto.avatar.split(',')[1], 'base64');
       const avatar = await AvatarService.putAvatar(
         prismaClient,
-        `${newUser.name}-avatar-${newUser.avatarIds.length}`,
+        `${user.name}-avatar-${user.avatarIds.length}`,
         avatarBuffer,
         SiteConfig.avatarSize,
         SiteConfig.avatarSize,
-        newUser.id
+        user.id
       );
 
-      return UserService.setUserAvatar(prismaClient, newUser.id, avatar.id);
+      return UserService.setUserAvatar(prismaClient, user.id, avatar.id);
     })
     .then(user => {
       console.log('created a user:', user);

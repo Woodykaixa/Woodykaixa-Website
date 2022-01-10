@@ -2,8 +2,13 @@ import { Typography } from 'antd';
 const { Text, Title, Paragraph, Link } = Typography;
 import { MarkdownToJSX } from 'markdown-to-jsx';
 import { Hidden, Title as MyTitle } from '@/components/markdown';
+import { Comment } from '@/components/markdown/Comment';
+import { ReactNode } from 'react';
+const TypoWrapper = (props: { children: ReactNode }) => {
+  return <Typography className='w-full'>{props.children}</Typography>;
+};
 export const MarkdownOptions: MarkdownToJSX.Options = {
-  wrapper: Typography,
+  wrapper: TypoWrapper,
   overrides: {
     h1: {
       component: MyTitle,
@@ -53,8 +58,11 @@ export const MarkdownOptions: MarkdownToJSX.Options = {
     br: {
       component: Paragraph,
     },
-    Hidden: {
+    hid: {
       component: Hidden,
+    },
+    cmt: {
+      component: Comment,
     },
   },
 };

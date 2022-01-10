@@ -20,6 +20,14 @@ export namespace UserService {
     });
   }
 
+  export async function findByEmail(prisma: PrismaClient, email: string) {
+    return prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+  }
+
   export async function createUser(
     prisma: PrismaClient,
     githubId: number,
