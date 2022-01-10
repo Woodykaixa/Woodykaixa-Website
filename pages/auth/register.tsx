@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Alert } from 'antd';
 import { GitHubState } from '@/util';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -69,7 +69,14 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
   };
 
   return (
-    <div className='bg-white p-8 mt-16 mx-8 flex justify-center'>
+    <div className='bg-white p-8 mt-16 mx-8 flex flex-col items-center justify-center'>
+      <Alert
+        message='我需要现在注册吗？'
+        description='即使未注册用户也可以浏览本站的全部内容，只有需要评论以及添加友链时才需要注册。'
+        type='info'
+        showIcon
+        closable
+      />
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
