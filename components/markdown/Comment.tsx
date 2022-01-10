@@ -6,8 +6,6 @@ export type CommentProps = {
 };
 
 export function Comment(props: CommentProps) {
-  console.log(props.comment);
-  console.log(props);
   return (
     <ruby>
       {props.children}
