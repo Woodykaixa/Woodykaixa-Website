@@ -4,6 +4,7 @@ import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 import { useState } from 'react';
 import { File, OK, Oss } from '@/dto';
+import { MarkdownEditor } from '@/components/MarkdownEditor';
 
 const EditorPage: NextPage = () => {
   const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
@@ -43,28 +44,22 @@ const EditorPage: NextPage = () => {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
         autoComplete='on'
-        className='items-center p-4 max-w-5xl w-full'
+        className='items-center p-4  w-full'
         form={form}
         initialValues={{ content: '12' }}
       >
-        <Form.Item name='name'>
+        <Form.Item name='name' label='文件'>
           <Input></Input>
         </Form.Item>
-        <Form.Item name='auth'>
+        <Form.Item name='auth' label='密码'>
           <Input></Input>
         </Form.Item>
-        <div className='flex'>
-          <Typography className='w-1/2'>
-            <Form.Item name='content'>
-              <Input.TextArea rows={30}></Input.TextArea>
-            </Form.Item>
-          </Typography>
-          <div className='w-1/2'>
-            <Markdown options={MarkdownOptions}>{t}</Markdown>
-          </div>
-        </div>
-        <Button onClick={get}>get</Button>
-        <Button onClick={put}>post</Button>
+        <Form.Item label='actions'>
+          <Button onClick={get}>get</Button>
+          <Button onClick={put}>post</Button>
+        </Form.Item>
+        <div className='h-10'></div>
+        <MarkdownEditor></MarkdownEditor>
       </Form>
     </div>
   );
