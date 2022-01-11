@@ -1,4 +1,3 @@
-import prismaClient from '@/lib/prisma';
 import { FileService } from '.';
 
 import type { PrismaClient } from '@prisma/client';
@@ -13,7 +12,7 @@ export namespace AvatarService {
     userId: string
   ) {
     const putFileResult = await FileService.putFile(prisma, filename, content, 'AVATAR');
-    return await prismaClient.avatarFile.create({
+    return await prisma.avatarFile.create({
       data: {
         filename,
         height,
