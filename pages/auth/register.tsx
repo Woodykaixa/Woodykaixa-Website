@@ -14,7 +14,7 @@ const ReadableErrorTexts: Record<string, { description: string; message: string 
     message: '该用户已注册',
   },
   'Email exists': {
-    description: '请直接登录',
+    description: '邮箱用于接收网站推送以及评论，因此不允许重复注册',
     message: '该邮箱已被注册',
   },
 };
