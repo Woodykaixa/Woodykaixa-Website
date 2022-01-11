@@ -22,6 +22,7 @@ declare global {
       ACCESS_KEY_ID: string;
       ACCESS_KEY_SECRET: string;
       DATABASE_URL: string;
+      JWT_SECRET: string;
     }
   }
 }

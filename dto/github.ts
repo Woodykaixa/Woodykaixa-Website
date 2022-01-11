@@ -33,26 +33,33 @@ export type GitHubGetUsersDTO = {
   updated_at: string;
 };
 
-export type GetUserInfoDTO = {
-  token: string;
-};
+export namespace Gh {
+  export type GetTokenDTO = {
+    code: string;
+  };
 
-export type GetUserInfoResp = {
-  login: string;
-  avatar_url: string;
-  html_url: string;
-  company: string;
-  blog: string;
-  location: string;
-  email: string;
-  bio: string;
-  id: number;
-};
+  export type GetTokenResp = {
+    access_token: string;
+    expires_in: number;
+    refresh_token: string;
+    refresh_token_expires_in: number;
+    token_type: 'bearer';
+    scope: string;
+  };
 
-export type GetTokenDTO = {
-  code: string;
-};
+  export type GetUserInfoDTO = {
+    token: string;
+  };
 
-export type GetTokenResp = {
-  token: string;
-};
+  export type GetUserInfoResp = {
+    login: string;
+    avatar_url: string;
+    html_url: string;
+    company: string;
+    blog: string;
+    location: string;
+    email: string;
+    bio: string;
+    id: number;
+  };
+}

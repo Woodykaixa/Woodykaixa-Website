@@ -16,6 +16,13 @@ export class BadRequest extends HttpError {
   }
 }
 
+export class Unauthorized extends HttpError {
+  constructor(message: string = 'unauthorized') {
+    super(message, 401);
+    this.name = 'Unauthorized';
+  }
+}
+
 export class NotFound extends HttpError {
   constructor(message: string = 'not found') {
     super(message, 404);

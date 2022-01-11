@@ -17,20 +17,33 @@ problems.
 
 4. Bad design everywhere.
 
+5. No SSR support, which means visitors won't find my posts on search engines.
+
 ### About my new website
 
 #### Functionality
 
-A blog system to post my articles. With Markdown support and comment system. Publish article from web page (Edit in web editor or select file from disk).
+1. A blog system to post my articles. 
 
-User system based on GitHub OAuth2.
+    - [x] Markdown support
+    - [ ] Comment system. 
+    - [ ] Publish article from web page (Edit in web editor or select file from disk).
 
-Access Control for Blog (Maybe removed)
+2. 
+    - [x] User system based on GitHub OAuth2.
+
+3. 
+    - [ ] Access Control for Blog 
+    > Removed. Grant OSS with `PublicRead`
 
 #### Secondary object
 
 1. Learning CI/CD, web deploying.
+    We don't have unit test or e2e test. But integrated this repo with [Vercel for GitHub](https://vercel.com/docs/concepts/git/vercel-for-github).
 
 2. Trying high-level frameworks
+    Using Ant Design and Next.js, these frameworks saved a lot of time for me.
 
 3. Work with cloud services.
+
+    We store images and articles on [Ali OSS service](https://cn.aliyun.com/product/oss) and using a [cloud MongoDB](https://www.mongodb.com/atlas/database)

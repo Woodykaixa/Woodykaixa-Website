@@ -81,7 +81,7 @@ model PostFile {
   id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
 
   /// The title of a post
-  title String
+  title String @unique
 
   /// first paragraph or first 20 words of a post
   brief String
