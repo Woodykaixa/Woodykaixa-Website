@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Err, GetTokenDTO, GetTokenResp, OK } from '@/dto';
+import { Err, Gh, OK } from '@/dto';
 import { errorHandler } from '@/util/error';
 import { ensureMethod, parseParam } from '@/util/api';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetTokenResp | Err.CommonResp>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Gh.GetTokenResp | Err.CommonResp>) {
   ensureMethod(req.method, ['GET'])
     .then(() =>
-      parseParam<GetTokenDTO>(req.query, {
+      parseParam<Gh.GetTokenDTO>(req.query, {
         code: param => ({
           valid: !!param && typeof param === 'string',
           parsed: param!,

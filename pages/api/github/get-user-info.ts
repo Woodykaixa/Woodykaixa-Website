@@ -1,12 +1,12 @@
-import { GetUserInfoResp, GetUserInfoDTO, Err, OK } from '@/dto';
+import { Gh, Err, OK } from '@/dto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ensureMethod, parseParam } from '@/util/api';
 import { errorHandler } from '@/util/error';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<GetUserInfoResp | Err.CommonResp>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Gh.GetUserInfoResp | Err.CommonResp>) {
   ensureMethod(req.method, ['GET'])
     .then(() =>
-      parseParam<GetUserInfoDTO>(req.query, {
+      parseParam<Gh.GetUserInfoDTO>(req.query, {
         token: param => ({
           valid: !!param && typeof param === 'string',
           parsed: param!,

@@ -12,6 +12,19 @@ export namespace UserService {
     });
   }
 
+  export async function findByGitHubIdAndPassword(prisma: PrismaClient, id: number, password: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        github_id: id,
+      },
+    });
+    if (!user) {
+      return user;
+    }
+
+    return bcrypt.compareSync(password, user.password) ? user : null;
+  }
+
   export async function findByGitHubId(prisma: PrismaClient, id: number) {
     return prisma.user.findFirst({
       where: {

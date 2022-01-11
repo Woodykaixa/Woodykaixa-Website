@@ -1,9 +1,9 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Form, Input, Button, notification, Alert } from 'antd';
 import { GitHubState } from '@/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { User, GetUserInfoResp, Err, OK } from '@/dto';
+import { User, Err, OK, Gh } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 import { SiteConfig } from '@/config/site';
@@ -19,8 +19,7 @@ const ReadableErrorTexts: Record<string, { description: string; message: string 
   },
 };
 
-const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
-  useStateCheck(query.state);
+function useUploading() {
   const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm<User.AddDTO>();
   const submit = (values: User.AddDTO) => {
@@ -45,7 +44,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
     })
       .then(async res => {
         const json = await res.json();
-        if (res.ok) {
+        if (res.status === OK.code) {
           return json as User.AddResp;
         }
         const jErr = json as Err.CommonResp;
@@ -73,6 +72,118 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
       });
   };
 
+  return {
+    form,
+    uploading,
+    submit,
+  };
+}
+
+function useUserInfo() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Err.CommonResp | null>(null);
+  const [data, setData] = useState<Omit<User.AddDTO, 'password'> | null>(null);
+  useEffect(() => {
+    (async () => {
+      if (!router.query.code) {
+        return;
+      }
+      try {
+        const getTokenResp = await fetch(SiteConfig.url + '/api/github/get-token?code=' + router.query.code);
+        const getTokenResult = (await getTokenResp.json()) as Gh.GetTokenResp;
+        console.log(getTokenResult);
+        if (getTokenResp.status !== OK.code) {
+          throw retrieveError(getTokenResult as any, getTokenResp.status);
+        }
+        const getUserInfoResp = await fetch(
+          SiteConfig.url + '/api/github/get-user-info?token=' + getTokenResult.access_token
+        );
+        const getUserInfoResult = (await getUserInfoResp.json()) as Gh.GetUserInfoResp;
+        console.log(getUserInfoResult);
+        if (getUserInfoResp.status !== OK.code) {
+          throw retrieveError(getUserInfoResult as any, getUserInfoResp.status);
+        }
+        const loginResp = await fetch(SiteConfig.url + '/api/user/login?githubId=' + getUserInfoResult.id, {
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+        if (loginResp.status === OK.code) {
+          router.replace('/auth/login');
+          setData(null);
+        } else {
+          setData({
+            avatar: getUserInfoResult.avatar_url,
+            bio: getUserInfoResult.bio,
+            blog: getUserInfoResult.blog,
+            email: getUserInfoResult.email,
+            github_id: getUserInfoResult.id,
+            name: getUserInfoResult.login,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        setError(
+          err instanceof Error
+            ? {
+                error: err.name,
+                desc: err.message,
+              }
+            : {
+                error: 'Error occurred',
+                desc: err as any,
+              }
+        );
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [router.query.code, router]);
+
+  return {
+    loading,
+    data,
+    error,
+  };
+}
+
+function useInner() {
+  const { form, uploading, submit } = useUploading();
+  const { data, error, loading } = useUserInfo();
+  if (data) {
+    form.setFieldsValue(data);
+  }
+  return {
+    form,
+    formDisabled: loading || uploading,
+    loading,
+    data,
+    submit,
+    error,
+  };
+}
+
+function retrieveError(error: Err.CommonResp, code: number) {
+  const err = new HttpError(error.desc, code);
+  err.name = error.error;
+  return err;
+}
+
+const Login: NextPage<{
+  code: string;
+  state: string;
+}> = query => {
+  useStateCheck(query.state);
+  const { form, formDisabled, error, submit, data, loading } = useInner();
+  useLayoutEffect(() => {
+    if (error) {
+      notification.error({
+        message: error.error,
+        description: error.desc,
+      });
+    }
+  }, [error]);
   return (
     <div className='bg-white p-8 mt-16 mx-8 flex flex-col items-center justify-center'>
       <Alert
@@ -87,13 +198,6 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         wrapperCol={{ span: 16 }}
         autoComplete='on'
         className='items-center p-4 max-w-5xl w-full'
-        initialValues={{
-          name: query.login,
-          email: query.email,
-          bio: query.bio,
-          blog: query.blog,
-          github_id: query.id,
-        }}
         form={form}
         onFinish={submit}
       >
@@ -105,7 +209,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
           }}
         >
           <div className='flex justify-center'>
-            <AvatarUploader img={query.avatar_url} width={250} height={250} form={form} />
+            {data && <AvatarUploader img={data.avatar} width={250} height={250} form={form} />}
             {/* <Image src={query.avatar_url} alt='avatar' width={100} height={100} className='rounded-full'></Image> */}
           </div>
         </Form.Item>
@@ -121,11 +225,11 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
             },
           ]}
         >
-          <Input disabled={uploading} />
+          <Input disabled={formDisabled} />
         </Form.Item>
 
         <Form.Item name='github_id' hidden>
-          <Input value={query.id} disabled />
+          <Input disabled />
         </Form.Item>
 
         <Form.Item
@@ -138,7 +242,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
             { max: 20, message: '也没必要这么长吧, 记得住吗?' },
           ]}
         >
-          <Input.Password disabled={uploading} />
+          <Input.Password disabled={formDisabled} />
         </Form.Item>
 
         <Form.Item
@@ -159,20 +263,20 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
             }),
           ]}
         >
-          <Input.Password disabled={uploading} />
+          <Input.Password disabled={formDisabled} />
         </Form.Item>
 
         <Form.Item label='电子邮箱' name='email' required rules={[{ type: 'email', required: true }]}>
-          <Input disabled={uploading} />
+          <Input disabled={formDisabled} />
         </Form.Item>
 
         <Form.Item label='你的主页' name='blog' rules={[{ type: 'url' }]}>
-          <Input disabled={uploading} />
+          <Input disabled={formDisabled} />
         </Form.Item>
 
         <Form.Item label='Bio' name='bio' rules={[{ max: 200, message: '太长了，数据库放不下了!' }]}>
           <Input.TextArea
-            disabled={uploading}
+            disabled={formDisabled}
             rows={5}
             className=' resize-none'
             placeholder='快来分享你有趣的灵魂⑧ !'
@@ -180,7 +284,7 @@ const Login: NextPage<GetUserInfoResp & { state: string }> = query => {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 16, span: 8 }}>
-          <Button type='primary' htmlType='submit' loading={uploading}>
+          <Button type='primary' htmlType='submit' loading={formDisabled ? false : loading} disabled={formDisabled}>
             立即注册
           </Button>
         </Form.Item>
@@ -206,78 +310,13 @@ function useStateCheck(state: string) {
   }, [state, router]);
 }
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  // return {
-  //   props: {
-  //     login: 'Woodykaixa',
-  //     avatar_url: 'https://avatars.githubusercontent.com/u/22990333?v=4',
-  //     html_url: 'https://github.com/Woodykaixa',
-  //     company: 'Beijing University of Technology',
-  //     blog: 'https://woodykaixa.github.io',
-  //     location: 'Beijing',
-  //     email: '690750353@qq.com',
-  //     bio: 'BJUT大四本科生，信息安全专业。\r\n你相信引力吗？',
-  //     id: 22990333,
-  //   },
-  // };
-  const { query } = ctx;
-  if (ctx.query.error) {
-    return {
-      redirect: {
-        destination: `/error?err=${query.error}&desc=${query.error_description}`,
-        permanent: false,
-      },
-    };
-  }
-  try {
-    const response = await fetch(SiteConfig.url + '/api/github/get-token?code=' + query.code);
-    const json = await response.json();
-    console.log(json);
-    if (json.error) {
-      return {
-        redirect: {
-          destination: `/error?err=${json.error}&desc=${json.desc}&se=true`,
-          permanent: false,
-        },
-      };
-    }
-    const res = await fetch(SiteConfig.url + '/api/github/get-user-info?token=' + json.access_token);
-    const user_info = await res.json();
-    console.log('res', user_info);
-    const getUserResp = await fetch(SiteConfig.url + '/api/user/get?githubId=' + user_info.id, {
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    const user = (await getUserResp.json()) as User.GetDTO;
-    console.log('user', user);
-    if (getUserResp.status === OK.code) {
-      return {
-        redirect: {
-          destination: '/auth/login',
-          permanent: false,
-        },
-      };
-    }
-    return {
-      props: { ...user_info, state: ctx.query.state },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        redirect: {
-          destination: `/error?err=${err.name}&desc=${err.message}&se=true`,
-          permanent: false,
-        },
-      };
-    }
-    return {
-      redirect: {
-        destination: `/error?err=${'Error Occurred'}&desc=${err}&se=true`,
-        permanent: false,
-      },
-    };
-  }
-};
-
 export default Login;
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  return {
+    props: {
+      code: ctx.query.code,
+      state: ctx.query.state,
+    },
+  };
+};
