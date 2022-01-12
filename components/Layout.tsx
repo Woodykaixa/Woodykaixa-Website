@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) {
       console.log('try fetch user');
-      fetchUser('');
+      fetchUser();
     }
     setAdmin(user ? user.admin : false);
   }, [user, fetchUser]);
@@ -56,7 +56,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </Menu.Item>
             {admin && (
               <Menu.Item key='5'>
-                <Link href='/admin'>编辑器</Link>
+                <Link href='/admin/editor'>编辑器</Link>
               </Menu.Item>
             )}
           </Menu>

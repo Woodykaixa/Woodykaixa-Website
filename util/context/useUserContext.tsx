@@ -11,7 +11,7 @@ type UserContextStates = User.AddResp | null;
 type UserContextActions = {
   setUser: (user: UserContextStates) => void;
   updateUser: (user: Simplify<Partial<NotNull<UserContextStates>>>) => void;
-  fetchUser: (auth: string) => Promise<Err.CommonResp>;
+  fetchUser: () => Promise<Err.CommonResp>;
   login: () => void;
 };
 export type UserContextType = [UserContextStates, UserContextActions];
@@ -38,15 +38,8 @@ export function UserInfoContext({ children }: { children: ReactNode }) {
           };
         });
       },
-      fetchUser: async auth => {
-        const jwt = localStorage.getItem(JwtConfig.COOKIE_KEY) ?? auth;
-        if (!jwt) {
-          return {
-            error: 'Unauthorized',
-            desc: 'missing jwt token',
-          };
-        }
-        const resp = await fetch(`/api/user/auth?auth=${jwt}`, {
+      fetchUser: async () => {
+        const resp = await fetch(`/api/user/auth`, {
           headers: {
             'content-type': 'application/json',
           },

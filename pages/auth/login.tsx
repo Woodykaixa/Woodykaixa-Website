@@ -11,23 +11,18 @@ export default function LoginPage() {
   const router = useRouter();
   const [, { fetchUser }] = useUserInfo();
   useEffect(() => {
-    const jwt = router.query[JwtConfig.COOKIE_KEY];
-    console.log(jwt);
-    if (jwt) {
-      localStorage.setItem(JwtConfig.COOKIE_KEY, firstValue(jwt));
-      localStorage.removeItem('GITHUB_OAUTH_STATE');
-      console.log('fetchUser');
-      fetchUser('').then(result => {
-        if (result.error === OK.text) {
-          message.success('登录成功，正在转跳……', 3, () => {
-            router.replace('/');
-          });
-        } else {
-          message.error('获取用户信息失败');
-          console.error(result);
-        }
-      });
-    }
+    localStorage.removeItem('GITHUB_OAUTH_STATE');
+    console.log('fetchUser');
+    fetchUser().then(result => {
+      if (result.error === OK.text) {
+        message.success('登录成功，正在转跳……', 3, () => {
+          router.replace('/');
+        });
+      } else {
+        message.error('获取用户信息失败');
+        console.error(result);
+      }
+    });
   }, [router, fetchUser]);
   return (
     <div className='m-16 flex justify-center'>

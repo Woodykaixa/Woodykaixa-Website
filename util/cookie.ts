@@ -7,7 +7,12 @@ import { NextApiResponse } from 'next';
  * This sets `cookie` using the `res` object
  */
 
-export const setCookie = (res: NextApiResponse, name: string, value: string, options: CookieSerializeOptions = {}) => {
+export const setCookie = (
+  res: NextApiResponse,
+  name: string,
+  value: string,
+  options: CookieSerializeOptions = { path: '/', httpOnly: true, secure: true }
+) => {
   if (options.maxAge) {
     options.expires = new Date(Date.now() + options.maxAge);
     options.maxAge /= 1000;

@@ -38,7 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         admin: user.admin,
         avatar: avatar!.File.url,
       });
-      res.status(OK.code).json({ jwt });
+      setCookie(res, JwtConfig.COOKIE_KEY, jwt);
+      res.status(OK.code).json({});
     })
     .catch(errorHandler(res))
     .finally(() => {
