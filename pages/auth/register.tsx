@@ -110,7 +110,11 @@ function useUserInfo() {
           },
         });
         if (loginResp.status === OK.code) {
-          router.replace('/auth/login');
+          const { jwt } = (await loginResp.json()) as User.LoginResp;
+          router.replace({
+            pathname: '/auth/login',
+            query: { jwt },
+          });
           setData(null);
         } else {
           setData({

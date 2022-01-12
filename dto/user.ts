@@ -7,4 +7,7 @@ export namespace User {
 
   export type GetDTO = { githubId: number };
   export type GetResp = UserModel;
+
+  export type LoginDTO = { githubId: number };
+  export type LoginResp = { jwt: string };
 }

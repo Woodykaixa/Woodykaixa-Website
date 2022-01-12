@@ -8,9 +8,9 @@ import { signJwt, verifyAuth } from '@/lib/jwt';
 import { JwtConfig } from '@/config/jwt';
 import { setCookie } from '@/util/cookie';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<User.AddResp | Err.CommonResp>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<User.LoginResp | Err.CommonResp>) {
   Promise.all([
-    parseParam<{ githubId: number }>(req.query, {
+    parseParam<User.LoginDTO>(req.query, {
       githubId: param => ({
         valid: isType(param, 'string'),
         parsed: parseInt((param as any) ?? '0', 10),
@@ -38,8 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         admin: user.admin,
         avatar: avatar!.File.url,
       });
-      setCookie(res, JwtConfig.COOKIE_KEY, jwt, { secure: true });
-      res.status(OK.code).json(user);
+      res.status(OK.code).json({ jwt });
     })
     .catch(errorHandler(res))
     .finally(() => {
