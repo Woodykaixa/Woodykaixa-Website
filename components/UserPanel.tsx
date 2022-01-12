@@ -2,14 +2,29 @@ import * as React from 'react';
 import { useUserInfo } from '@/util/context/useUserContext';
 import { LoginPanel } from './LoginPanel';
 
-import { Card, Tooltip } from 'antd';
+import { Card, message, Tooltip } from 'antd';
 import { EditOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 const { Meta } = Card;
 
 export function UserPanel() {
   const [user, actions] = useUserInfo();
-
+  const router = useRouter();
+  const logout = () => {
+    fetch('/api/user/logout')
+      .then(res => {
+        if (res.ok) {
+          router.reload();
+        } else {
+          message.error('登出失败');
+          throw res.text();
+        }
+      })
+      .catch(err => {
+        console.error('logout failed:', err);
+      });
+  };
   return (
     <>
       {!user && <LoginPanel />}
@@ -23,7 +38,7 @@ export function UserPanel() {
                 <EditOutlined />
               </Tooltip>,
               <Tooltip title='退出登录' key='logout'>
-                <LogoutOutlined />
+                <LogoutOutlined onClick={logout} />
               </Tooltip>,
             ]}
             className='w-full'
