@@ -1,13 +1,9 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
-import { User as UserModel } from '@prisma/client';
 import { Simplify } from '../type';
 import { GitHubAPI, GitHubState } from '@/util/github';
-import useSWR from 'swr';
-import { fetcher } from '@/lib/fetcher';
 import { Err, OK, User } from '@/dto';
-import { JwtConfig } from '@/config/jwt';
 
-type UserContextStates = User.AddResp | null;
+type UserContextStates = User.AuthResp | null;
 type UserContextActions = {
   setUser: (user: UserContextStates) => void;
   updateUser: (user: Simplify<Partial<NotNull<UserContextStates>>>) => void;
@@ -44,7 +40,7 @@ export function UserInfoContext({ children }: { children: ReactNode }) {
             'content-type': 'application/json',
           },
         });
-        const json = (await resp.json()) as User.AddResp;
+        const json = (await resp.json()) as User.AuthResp;
         if (resp.status === OK.code) {
           _setStates({ ...json });
           return {
