@@ -1,9 +1,10 @@
 import { useState, ReactNode, useEffect } from 'react';
-import { Layout, Menu, Dropdown } from 'antd';
+import { Layout, Menu, Dropdown, Avatar } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { UserPanel } from './UserPanel';
 import { useUserInfo } from '@/util/context/useUserContext';
+import Icon from '@ant-design/icons';
 
 const { Header, Content, Footer } = Layout;
 
@@ -54,11 +55,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Menu.Item key='4'>
               <Link href='/me'>关于我</Link>
             </Menu.Item>
-            {admin && (
-              <Menu.Item key='5'>
-                <Link href='/admin/editor'>编辑器</Link>
-              </Menu.Item>
-            )}
           </Menu>
           <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel></UserPanel>}>
             <GithubOutlined className='bg-white invert filter rounded-full my-3' style={{ fontSize: 40 }} />
