@@ -10,4 +10,7 @@ export namespace User {
 
   export type LoginDTO = { githubId: number };
   export type LoginResp = { jwt: string };
+
+  export type AuthDTO = { auth: string };
+  export type AuthResp = Simplify<Omit<UserModel, 'avatarIds' | 'salt' | 'password'> & { avatar: string }>;
 }

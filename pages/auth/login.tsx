@@ -4,20 +4,31 @@ import { message, Spin, Result } from 'antd';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useUserInfo } from '@/util/context/useUserContext';
+import { OK } from '@/dto';
 
 export default function LoginPage() {
   const router = useRouter();
-  console.log(router.query);
+  const [, { fetchUser }] = useUserInfo();
   useEffect(() => {
     const jwt = router.query[JwtConfig.COOKIE_KEY];
+    console.log(jwt);
     if (jwt) {
       localStorage.setItem(JwtConfig.COOKIE_KEY, firstValue(jwt));
       localStorage.removeItem('GITHUB_OAUTH_STATE');
-      message.success('登录成功，正在转跳……', 3, () => {
-        router.replace('/');
+      console.log('fetchUser');
+      fetchUser('').then(result => {
+        if (result.error === OK.text) {
+          message.success('登录成功，正在转跳……', 3, () => {
+            router.replace('/');
+          });
+        } else {
+          message.error('获取用户信息失败');
+          console.error(result);
+        }
       });
     }
-  }, [router]);
+  }, [router, fetchUser]);
   return (
     <div className='m-16 flex justify-center'>
       <Result

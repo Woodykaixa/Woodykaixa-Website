@@ -1,13 +1,25 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { Layout, Menu, Dropdown } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { UserPanel } from './UserPanel';
+import { useUserInfo } from '@/util/context/useUserContext';
+
 const { Header, Content, Footer } = Layout;
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
+  const [admin, setAdmin] = useState(false);
+  const [user, { fetchUser }] = useUserInfo();
+  useEffect(() => {
+    if (!user) {
+      console.log('try fetch user');
+      fetchUser('');
+    }
+    setAdmin(user ? user.admin : false);
+  }, [user, fetchUser]);
 
+  console.log(user);
   return (
     <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full '>
@@ -42,6 +54,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Menu.Item key='4'>
               <Link href='/me'>关于我</Link>
             </Menu.Item>
+            {admin && (
+              <Menu.Item key='5'>
+                <Link href='/admin'>编辑器</Link>
+              </Menu.Item>
+            )}
           </Menu>
           <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel></UserPanel>}>
             <GithubOutlined className='bg-white invert filter rounded-full my-3' style={{ fontSize: 40 }} />

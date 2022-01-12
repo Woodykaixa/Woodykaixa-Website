@@ -7,6 +7,7 @@ import { User, Err, OK, Gh } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 import { SiteConfig } from '@/config/site';
+import { JwtConfig } from '@/config/jwt';
 
 const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
   'User exists': {
@@ -111,9 +112,11 @@ function useUserInfo() {
         });
         if (loginResp.status === OK.code) {
           const { jwt } = (await loginResp.json()) as User.LoginResp;
+          const query = {} as any;
+          query[JwtConfig.COOKIE_KEY] = jwt;
           router.replace({
             pathname: '/auth/login',
-            query: { jwt },
+            query,
           });
           setData(null);
         } else {
