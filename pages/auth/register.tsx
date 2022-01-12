@@ -7,6 +7,7 @@ import { User, Err, OK, Gh } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 import { SiteConfig } from '@/config/site';
+import { JwtConfig } from '@/config/jwt';
 
 const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
   'User exists': {
@@ -104,13 +105,15 @@ function useUserInfo() {
         if (getUserInfoResp.status !== OK.code) {
           throw retrieveError(getUserInfoResult as any, getUserInfoResp.status);
         }
-        const loginResp = await fetch(SiteConfig.url + '/api/user/login?githubId=' + getUserInfoResult.id, {
+        const loginResp = await fetch(`/api/user/login?githubId=${getUserInfoResult.id}`, {
           headers: {
             'content-type': 'application/json',
           },
         });
         if (loginResp.status === OK.code) {
-          router.replace('/auth/login');
+          router.replace({
+            pathname: '/auth/login',
+          });
           setData(null);
         } else {
           setData({
@@ -284,7 +287,7 @@ const Login: NextPage<{
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 16, span: 8 }}>
-          <Button type='primary' htmlType='submit' loading={formDisabled ? false : loading} disabled={formDisabled}>
+          <Button type='primary' htmlType='submit' loading={loading} disabled={formDisabled}>
             立即注册
           </Button>
         </Form.Item>

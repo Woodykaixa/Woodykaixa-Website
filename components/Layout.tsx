@@ -1,13 +1,26 @@
-import { useState, ReactNode } from 'react';
-import { Layout, Menu, Dropdown } from 'antd';
+import { useState, ReactNode, useEffect } from 'react';
+import { Layout, Menu, Dropdown, Avatar } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { UserPanel } from './UserPanel';
+import { useUserInfo } from '@/util/context/useUserContext';
+import Icon from '@ant-design/icons';
+
 const { Header, Content, Footer } = Layout;
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
+  const [admin, setAdmin] = useState(false);
+  const [user, { fetchUser }] = useUserInfo();
+  useEffect(() => {
+    if (!user) {
+      console.log('try fetch user');
+      fetchUser();
+    }
+    setAdmin(user ? user.admin : false);
+  }, [user, fetchUser]);
 
+  console.log(user);
   return (
     <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full '>

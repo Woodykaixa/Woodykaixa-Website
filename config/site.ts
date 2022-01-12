@@ -4,5 +4,5 @@ export const SiteConfig = {
   /**
    * Length of avatar's width and height, make is square
    */
-  avatarSize: 100,
+  avatarSize: 250,
 };

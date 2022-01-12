@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
 import { SiteConfig } from '@/config/site';
 import Head from 'next/head';
+import { UserInfoContext } from '@/util/context/useUserContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -13,9 +14,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>{SiteConfig.title}</title>
       </Head>
 
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <UserInfoContext>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </UserInfoContext>
     </>
   );
 }
