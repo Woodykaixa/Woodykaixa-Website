@@ -12,6 +12,7 @@ export default function LoginPage() {
     const jwt = router.query[JwtConfig.COOKIE_KEY];
     if (jwt) {
       localStorage.setItem(JwtConfig.COOKIE_KEY, firstValue(jwt));
+      localStorage.removeItem('GITHUB_OAUTH_STATE');
       message.success('登录成功，正在转跳……', 3, () => {
         router.replace('/');
       });
