@@ -7,6 +7,7 @@ export namespace Err {
   export const User = {
     EXISTS: 'User exists',
     NOT_EXISTS: 'User not exists',
+    WRONG_PASSWORD: 'Wrong password',
   } as const;
 
   export type UserErrorType = typeof User[keyof typeof User];

@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { Unauthorized } from '@/util/error';
 import { Simplify } from '@/util/type';
 import { User } from '@/dto';
-type UserJwtPayload = Simplify<Omit<User.GetResp, 'avatarIds' | 'salt' | 'password'> & { avatar: string }>;
+type UserJwtPayload = Simplify<Omit<User.GetResp, 'avatarIds' | 'password'> & { avatar: string }>;
 
 /**
  * Verifies the user's JWT token and returns the payload if

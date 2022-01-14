@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse, NextConfig } from 'next';
 import prismaClient from '@/lib/prisma';
 import { Err, OK, User } from '@/dto';
 import { ensureMethod, parseParam } from '@/util/api';
@@ -19,6 +19,8 @@ import { UserService, AvatarService } from '@/lib/services';
  */
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<User.AddResp | Err.CommonResp>) {
+  console.log(req);
+  console.log(req.headers);
   prismaClient
     .$connect()
     .then(() => ensureMethod(req.method, ['POST']))
@@ -29,23 +31,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
           parsed: (param as string) ?? null,
         }),
         email: parseParam.parser.string,
-        github_id: parseParam.parser.int,
         name: parseParam.parser.string,
         password: parseParam.parser.string,
         bio: parseParam.parser.string,
         avatar: parseParam.parser.secondaryCheck<string>(parseParam.parser.string, value =>
           value.startsWith('data:image')
         ),
+        avatarSize: parseParam.parser.int,
       })
     )
     .then(async dto => {
-      {
-        const user = await UserService.findByGitHubId(prismaClient, dto.github_id);
-
-        if (user) {
-          throw new BadRequest(Err.User.EXISTS);
-        }
-      }
       {
         const user = await UserService.findByEmail(prismaClient, dto.email);
 
@@ -54,23 +49,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         }
       }
 
-      const user = await UserService.createUser(
-        prismaClient,
-        dto.github_id,
-        dto.email,
-        dto.name,
-        dto.password,
-        [],
-        dto.blog,
-        dto.bio
-      );
+      const user = await UserService.createUser(prismaClient, dto.email, dto.name, dto.password, [], dto.blog, dto.bio);
       const avatarBuffer = Buffer.from(dto.avatar.split(',')[1], 'base64');
       const avatar = await AvatarService.putAvatar(
         prismaClient,
         `${user.name}-avatar-${user.avatarIds.length}`,
         avatarBuffer,
-        SiteConfig.avatarSize,
-        SiteConfig.avatarSize,
+        dto.avatarSize,
+        dto.avatarSize,
         user.id
       );
 
@@ -82,7 +68,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         admin: user.admin,
         bio: user.bio,
         blog: user.blog,
-        github_id: user.github_id,
         name: user.name,
         email: user.email,
         id: user.id,
@@ -93,3 +78,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
       return prismaClient.$disconnect();
     });
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '4mb',
+    },
+  },
+};
