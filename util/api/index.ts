@@ -19,7 +19,7 @@ export function raiseError(errResp: Err.CommonResp) {
   throw error;
 }
 
-type TypeOfJson = 'array' | 'boolean' | 'number' | 'object' | 'string' | 'null';
+export type TypeOfJson = 'array' | 'boolean' | 'number' | 'object' | 'string' | 'null';
 
 export function isType(param: any, type: TypeOfJson) {
   if (type === 'null') {

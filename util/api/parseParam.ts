@@ -1,9 +1,8 @@
 import { BadRequest } from '@/util/error';
-
-type ParserResult<T> = { valid: boolean; parsed: T } | Promise<{ valid: boolean; parsed: T }>;
+import { ParamParser, DefaultParser } from './defaultParsers';
 
 type SchemaType<HttpParamType extends object = {}> = {
-  [key in keyof HttpParamType]: (value?: HttpParamType[key]) => ParserResult<HttpParamType[key]>;
+  [key in keyof HttpParamType]: ParamParser<HttpParamType[key]>;
 };
 
 export async function parseParam<HttpParamType extends object>(
@@ -38,3 +37,5 @@ export async function parseParam<HttpParamType extends object>(
 
   return result;
 }
+
+parseParam.parser = DefaultParser;
