@@ -4,12 +4,15 @@ import { MessageOutlined } from '@ant-design/icons';
 import * as React from 'react';
 import moment from 'moment';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Err, OK } from '@/dto';
+import { SiteConfig } from '@/config/site';
 
 const { Search } = Input;
 type PostType = {
   id: string;
   title: string;
-  avatar: string;
+  cover: string;
   description: string;
   content: string;
   createAt: Date;
@@ -17,22 +20,7 @@ type PostType = {
   comments: number;
 };
 
-const listData = [] as PostType[];
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    id: 'asd',
-    title: `ant design part ${i}`,
-    createAt: new Date(),
-    keywords: ['react', 'typescript', 'next.js'],
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    comments: 120,
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-  });
-}
-
-const Post = ({ title, createAt, keywords, comments, content, id, description }: PostType) => {
+const Post = ({ title, createAt, keywords, comments, content, id, description, cover }: PostType) => {
   return (
     <List.Item
       key={title}
@@ -47,7 +35,7 @@ const Post = ({ title, createAt, keywords, comments, content, id, description }:
           ))}
         </Space>,
       ]}
-      extra={<img width={272} alt='logo' src='https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png' />}
+      extra={<Image width={272} alt='cover' src={cover}></Image>}
     >
       <List.Item.Meta title={<Link href={`/blog/${id}`}>{title}</Link>} description={description} />
       {content}
@@ -55,9 +43,7 @@ const Post = ({ title, createAt, keywords, comments, content, id, description }:
   );
 };
 
-const Blog: NextPage<{
-  files: Array<{ path: string; type: string }>;
-}> = ({ files }) => {
+const Blog: NextPage<ServerSideProps> = ({ files }) => {
   return (
     <div className='bg-white p-6 flex flex-col items-center mt-8'>
       <div className='flex flex-col w-3/4 items-center'>
@@ -71,7 +57,7 @@ const Blog: NextPage<{
             },
             pageSize: 5,
           }}
-          dataSource={listData}
+          dataSource={files}
           footer={
             <div>
               还没仔细研究过，不过本站的所有文章应该会使用 <b>CC-BY-SA-4.0</b> 协议
@@ -85,26 +71,27 @@ const Blog: NextPage<{
 };
 
 export default Blog;
-
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const json = [
-    {
-      path: 'README.md',
-      type: 'markdown',
-    },
-  ];
-  if (Array.isArray(json)) {
+type ServerSideProps = {
+  files: PostType[];
+};
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
+  // 现在没有那么多数据，直接全量获取
+  // 我是懒狗
+  const postResponse = await fetch(SiteConfig.url + '/api/blog/page?page=0&size=100');
+  const posts = await postResponse.json();
+  if (postResponse.status === OK.code) {
     return {
       props: {
-        files: json,
-      },
-    };
-  } else {
-    console.log(json);
-    return {
-      props: {
-        files: [],
+        files: posts,
+        error: null,
       },
     };
   }
+  const error = posts as unknown as Err.CommonResp;
+  return {
+    redirect: {
+      destination: `/error?err=${error.error}&desc=${error.desc}&se=true`,
+      permanent: false,
+    },
+  };
 };
