@@ -67,7 +67,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           京ICP备20006005号
         </a>
         <p>
-          ©2021 Created by{' '}
+          ©2021-2022 Created by{' '}
           <a href='https://github.com/Woodykaixa' target='_blank' rel='noreferrer'>
             Woodykaixa
           </a>
