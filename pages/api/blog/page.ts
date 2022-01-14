@@ -6,12 +6,19 @@ import { errorHandler } from '@/util/error';
 import { omit } from 'lodash';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.ListResp | Err.CommonResp>) {
-  console.log(req.query);
+  const query = req.query as unknown as Blog.ListDTO;
+  if (query.page) {
+    query.page = Number(query.page);
+  }
+
+  if (query.size) {
+    query.size = Number(query.size);
+  }
   prismaClient
     .$connect()
     .then(() => ensureMethod(req.method, ['GET']))
     .then(() =>
-      parseParam<Blog.ListDTO>(req.query, {
+      parseParam<Blog.ListDTO>(query, {
         page: parseParam.parser.intGe(0),
         size: parseParam.parser.intGt(0),
       })

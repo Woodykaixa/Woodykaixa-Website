@@ -38,7 +38,7 @@ const float: ParamParser<number> = async param => {
 };
 
 const int: ParamParser<number> = async param => {
-  const { parsed, valid } = await float(param);
+  const { parsed, valid } = await number(param);
   if (!valid) {
     return {
       parsed,
@@ -52,11 +52,11 @@ const int: ParamParser<number> = async param => {
 };
 
 const intGt: (value: number) => ParamParser<number> = value => async param => {
-  return secondaryCheck(param, number, param => param > value);
+  return secondaryCheck(param, int, param => param > value);
 };
 
 const intGe: (value: number) => ParamParser<number> = value => async param => {
-  return secondaryCheck(param, number, param => param >= value);
+  return secondaryCheck(param, int, param => param >= value);
 };
 
 const string: ParamParser<string> = param => {
