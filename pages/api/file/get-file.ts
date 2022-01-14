@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Err, OK, Oss } from '@/dto';
-import { ensureMethod, parseParam, firstValue } from '@/util/api';
+import { ensureMethod, parseParam } from '@/util/api';
 import { errorHandler } from '@/util/error';
 
 import prismaClient from '@/lib/prisma';
@@ -12,10 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Oss.Ge
     .then(() => ensureMethod(req.method, ['GET']))
     .then(() =>
       parseParam<Oss.GetFileDTO>(req.query, {
-        name: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
-        }),
+        name: parseParam.parser.string,
       })
     )
     .then(param => FileService.getFile(prismaClient, param.name, 'POST'))

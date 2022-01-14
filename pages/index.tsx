@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { notification, Alert } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
-import { Err, Oss } from '@/dto';
+import { Err, OK, Oss } from '@/dto';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 import { CommentList } from '@/components/CommentList';
@@ -55,24 +55,24 @@ type ServerSideProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
-  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=README.md');
-  const json = await (result.json() as Promise<Oss.GetFileResp>);
-  const jErr = json as unknown as Err.CommonResp;
-  if (jErr.error) {
+  const result = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/index-article');
+  const content = await result.text();
+  if (result.status === OK.code) {
     return {
       props: {
-        error: true,
-        err_or_content: jErr.error,
-        desc: jErr.desc,
+        error: false,
+        err_or_content: content,
+        desc: '',
         mode: process.env.APP_ENV,
       },
     };
   }
+  const jErr = JSON.parse(content) as Err.CommonResp;
   return {
     props: {
-      error: false,
-      err_or_content: (json as any).content,
-      desc: '',
+      error: true,
+      err_or_content: jErr.error,
+      desc: jErr.desc,
       mode: process.env.APP_ENV,
     },
   };

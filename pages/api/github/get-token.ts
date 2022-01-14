@@ -7,10 +7,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Gh.Get
   ensureMethod(req.method, ['GET'])
     .then(() =>
       parseParam<Gh.GetTokenDTO>(req.query, {
-        code: param => ({
-          valid: !!param && typeof param === 'string',
-          parsed: param!,
-        }),
+        code: parseParam.parser.string,
       })
     )
     .then(({ code }) => {

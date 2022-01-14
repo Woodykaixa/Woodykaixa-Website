@@ -98,6 +98,9 @@ model PostFile {
 
   File   File   @relation(fields: [fileId], references: [id])
   fileId String @db.ObjectId
+
+  Comments Comment[] @relation
+  comments String[]  @db.String
 }
 
 model AvatarFile {
@@ -134,6 +137,11 @@ model Comment {
   replyTo        Comment?  @relation("replyComment", fields: [replyCommentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments       Comment[] @relation("replyComment")
 
+  /// author of this comment
   authorId String @db.ObjectId
   author   User   @relation(fields: [authorId], references: [id])
+
+  /// comment to which post
+  PostFile   PostFile? @relation(fields: [postFileId], references: [id])
+  postFileId String?   @db.ObjectId
 }

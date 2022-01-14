@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prismaClient from '@/lib/prisma';
-import { Avatar, Err, OK, User } from '@/dto';
-import { ensureMethod, parseParam, firstValue, isType } from '@/util/api';
-import bcrypt from 'bcrypt';
-import { BadRequest, HttpError, errorHandler } from '@/util/error';
+import { Err, OK, User } from '@/dto';
+import { ensureMethod, parseParam } from '@/util/api';
+import { BadRequest, errorHandler } from '@/util/error';
 import { SiteConfig } from '@/config/site';
 import { UserService, AvatarService } from '@/lib/services';
 
@@ -27,32 +26,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
       parseParam<User.AddDTO>(req.body, {
         blog: param => ({
           valid: true,
-          parsed: param ? firstValue(param) : null,
+          parsed: (param as string) ?? null,
         }),
-        email: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
-        }),
-        github_id: param => ({
-          valid: !!param && typeof param === 'number',
-          parsed: param!,
-        }),
-        name: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
-        }),
-        password: param => ({
-          valid: !!param,
-          parsed: firstValue(param!),
-        }),
-        bio: param => ({
-          valid: true,
-          parsed: param ? firstValue(param) : null,
-        }),
-        avatar: param => ({
-          valid: isType(param, 'string') && param!.startsWith('data:image'),
-          parsed: param!,
-        }),
+        email: parseParam.parser.string,
+        github_id: parseParam.parser.int,
+        name: parseParam.parser.string,
+        password: parseParam.parser.string,
+        bio: parseParam.parser.string,
+        avatar: parseParam.parser.secondaryCheck<string>(parseParam.parser.string, value =>
+          value.startsWith('data:image')
+        ),
       })
     )
     .then(async dto => {

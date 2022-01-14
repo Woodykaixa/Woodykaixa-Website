@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Err, User } from '@/dto';
-import { ensureMethod, parseParam, isType } from '@/util/api';
+import { ensureMethod } from '@/util/api';
 import { errorHandler, Unauthorized } from '@/util/error';
 import { signJwt, verifyAuth } from '@/lib/jwt';
 import { JwtConfig } from '@/config/jwt';
