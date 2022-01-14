@@ -10,14 +10,16 @@ const { Header, Content, Footer } = Layout;
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
-  const [admin, setAdmin] = useState(false);
   const [user, { fetchUser }] = useUserInfo();
   useEffect(() => {
     if (!user) {
       console.log('try fetch user');
       fetchUser();
     }
-    setAdmin(user ? user.admin : false);
+    // Update jwt per 25 minutes, so we won't get expire
+    setInterval(() => {
+      fetchUser();
+    }, 25 * 60 * 1000);
   }, [user, fetchUser]);
 
   console.log(user);
