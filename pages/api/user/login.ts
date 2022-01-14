@@ -2,9 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prismaClient from '@/lib/prisma';
 import { Err, OK, User } from '@/dto';
 import { ensureMethod, parseParam, isType } from '@/util/api';
-import { BadRequest, errorHandler, Unauthorized } from '@/util/error';
+import { BadRequest, errorHandler } from '@/util/error';
 import { UserService, AvatarService } from '@/lib/services';
-import { signJwt, verifyAuth } from '@/lib/jwt';
+import { signJwt } from '@/lib/jwt';
 import { JwtConfig } from '@/config/jwt';
 import { setCookie } from '@/util/cookie';
 

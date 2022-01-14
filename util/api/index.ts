@@ -28,6 +28,5 @@ export function isType(param: any, type: TypeOfJson) {
   if (type === 'array') {
     return Array.isArray(param);
   }
-  console.log('isType: typeof param', typeof param);
   return typeof param === type;
 }

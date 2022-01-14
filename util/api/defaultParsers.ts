@@ -8,7 +8,7 @@ async function secondaryCheck<T>(
   parser: ParamParser<T>,
   secondaryParser: (param: T) => boolean | Promise<boolean>
 ) {
-  const { parsed, valid } = await parser(param);
+  const { parsed, valid } = await parser(param as T);
   if (!valid) {
     return {
       parsed,
@@ -101,4 +101,12 @@ export const DefaultParser = {
   array,
   boolean,
   object,
+  /**
+   * Reuse default parsers, and add our own logics in secondaryParser
+   * @param parser One of default parsers
+   * @param secondaryParser Another parser called after `parser`
+   */
+  secondaryCheck<T>(parser: ParamParser<T>, secondaryParser: (param: T) => boolean | Promise<boolean>) {
+    return (param: unknown) => secondaryCheck(param, parser, secondaryParser);
+  },
 };

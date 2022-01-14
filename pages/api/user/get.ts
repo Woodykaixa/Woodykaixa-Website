@@ -6,7 +6,6 @@ import { BadRequest, errorHandler } from '@/util/error';
 import { UserService } from '@/lib/services';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<User.GetResp | Err.CommonResp>) {
-  console.log(req.query);
   prismaClient
     .$connect()
     .then(() => ensureMethod(req.method, ['GET']))
