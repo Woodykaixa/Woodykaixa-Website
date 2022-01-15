@@ -16,7 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const result = verifyAuth(auth);
       const newAuth = signJwt({
         id: result.id,
-        github_id: result.github_id,
         email: result.email,
         name: result.name,
         blog: result.blog,

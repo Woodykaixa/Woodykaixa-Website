@@ -12,27 +12,6 @@ export namespace UserService {
     });
   }
 
-  export async function findByGitHubIdAndPassword(prisma: PrismaClient, id: number, password: string) {
-    const user = await prisma.user.findFirst({
-      where: {
-        github_id: id,
-      },
-    });
-    if (!user) {
-      return user;
-    }
-
-    return bcrypt.compareSync(password, user.password) ? user : null;
-  }
-
-  export async function findByGitHubId(prisma: PrismaClient, id: number) {
-    return prisma.user.findFirst({
-      where: {
-        github_id: id,
-      },
-    });
-  }
-
   export async function findByEmail(prisma: PrismaClient, email: string) {
     return prisma.user.findFirst({
       where: {
@@ -41,9 +20,20 @@ export namespace UserService {
     });
   }
 
+  export async function findByEmailAndPassword(prisma: PrismaClient, email: string, password: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (user) {
+      return bcrypt.compareSync(password, user.password) ? user : null;
+    }
+    return null;
+  }
+
   export async function createUser(
     prisma: PrismaClient,
-    githubId: number,
     email: string,
     name: string,
     password: string,
@@ -56,7 +46,6 @@ export namespace UserService {
 
     return prisma.user.create({
       data: {
-        github_id: githubId,
         email,
         name,
         bio,
@@ -64,7 +53,6 @@ export namespace UserService {
         admin: false,
         avatarIds,
         password: passwordHash,
-        salt,
       },
     });
   }

@@ -1,23 +1,25 @@
 import { useState, ReactNode, useEffect } from 'react';
 import { Layout, Menu, Dropdown, Avatar } from 'antd';
-import { GithubOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { UserPanel } from './UserPanel';
 import { useUserInfo } from '@/util/context/useUserContext';
-import Icon from '@ant-design/icons';
 
 const { Header, Content, Footer } = Layout;
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
-  const [admin, setAdmin] = useState(false);
   const [user, { fetchUser }] = useUserInfo();
+  const { visible, open, close } = useDropdown();
   useEffect(() => {
     if (!user) {
       console.log('try fetch user');
       fetchUser();
     }
-    setAdmin(user ? user.admin : false);
+    // Update jwt per 25 minutes, so we won't get expire
+    setInterval(() => {
+      fetchUser();
+    }, 25 * 60 * 1000);
   }, [user, fetchUser]);
 
   console.log(user);
@@ -56,8 +58,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link href='/me'>关于我</Link>
             </Menu.Item>
           </Menu>
-          <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel></UserPanel>}>
-            <GithubOutlined className='bg-white invert filter rounded-full my-3' style={{ fontSize: 40 }} />
+          <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel close={close} />}>
+            {user ? (
+              <div className='flex items-center'>
+                <Avatar src={user.avatar} size={40}></Avatar>
+              </div>
+            ) : (
+              <UserOutlined
+                className='bg-white invert filter rounded-full my-3'
+                style={{ fontSize: 40 }}
+                onClick={open}
+              />
+            )}
           </Dropdown>
         </div>
       </Header>
@@ -79,4 +91,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </Footer>
     </Layout>
   );
+}
+
+function useDropdown() {
+  const [visible, setVisible] = useState(false);
+  const open = () => setVisible(true);
+  const close = () => setVisible(false);
+  return {
+    visible,
+    open,
+    close,
+  };
 }

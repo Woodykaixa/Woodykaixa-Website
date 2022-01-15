@@ -32,11 +32,11 @@ const beforeUpload: UploadProps['beforeUpload'] = file => {
   if (!isJpgOrPng) {
     message.error('You can only upload JPG/PNG file!');
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
+  const isLt1M = file.size / 1024 / 1024 < 1;
+  if (!isLt1M) {
+    message.error('Image must smaller than 1MB!');
   }
-  return isJpgOrPng && isLt2M;
+  return isJpgOrPng && isLt1M;
 };
 
 function useModal() {
@@ -48,35 +48,20 @@ function useModal() {
   };
 }
 
-export function AvatarUploader(props: { img: string; width: number; height: number; form: FormInstance<User.AddDTO> }) {
+export function AvatarUploader(props: { avatarSize: number; form: FormInstance<User.AddDTO>; loading: boolean }) {
   const { showModal, closeModal, openModal } = useModal();
   const [scale, setScale] = useState(1);
-  let imgUrl = props.img;
-  const [imageUrl, _setImageUrl] = useState(props.img);
-  const [originImageUrl, setOriginImageUrl] = useState(props.img);
+  const [imageUrl, _setImageUrl] = useState<string | null>(null);
+  const [originImageUrl, setOriginImageUrl] = useState('');
   const ref = useRef<AvatarEditor | null>(null);
 
-  const setImageUrl = (url: string) => {
-    console.log(url);
+  const setImageData = (url: string, size: number) => {
     _setImageUrl(url);
     props.form.setFieldsValue({
       avatar: url,
+      avatarSize: size,
     });
   };
-  useEffect(() => {
-    if (!imgUrl.startsWith('http')) {
-      return;
-    }
-    fetch(imgUrl)
-      .then(res => {
-        return res.blob();
-      })
-      .then(getBase64)
-      .then(url => {
-        setImageUrl(url);
-        console.log(url);
-      });
-  }, [imgUrl]);
 
   const handleChange: UploadProps['onChange'] = info => {
     if (info.file.status === 'done') {
@@ -95,8 +80,8 @@ export function AvatarUploader(props: { img: string; width: number; height: numb
         visible={showModal}
         closable={false}
         onOk={() => {
-          const canvas = ref.current!.getImage().toDataURL();
-          setImageUrl(canvas);
+          const canvas = ref.current!.getImage();
+          setImageData(canvas.toDataURL(), canvas.height);
           closeModal();
         }}
         onCancel={() => {
@@ -107,10 +92,10 @@ export function AvatarUploader(props: { img: string; width: number; height: numb
         <AvatarEditor
           ref={ref}
           image={originImageUrl}
-          width={props.width}
-          height={props.height}
+          width={props.avatarSize * 2}
+          height={props.avatarSize * 2}
           border={0}
-          borderRadius={props.width / 2}
+          borderRadius={props.avatarSize}
           color={[0, 0, 0, 0.6]} // RGBA
           scale={scale}
         />
@@ -124,14 +109,26 @@ export function AvatarUploader(props: { img: string; width: number; height: numb
         beforeUpload={beforeUpload}
         onChange={handleChange}
       >
-        <Image
-          src={imageUrl}
-          alt='avatar'
-          className='rounded-full'
-          height={props.height}
-          width={props.width}
-          draggable={false}
-        />
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt='avatar'
+            className='rounded-full'
+            height={props.avatarSize}
+            width={props.avatarSize}
+            draggable={false}
+          />
+        ) : (
+          <div
+            style={{ width: props.avatarSize, height: props.avatarSize }}
+            className='flex justify-center items-center'
+          >
+            <div>
+              {props.loading ? <LoadingOutlined /> : <PlusOutlined />}
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          </div>
+        )}
       </Upload>
     </>
   );

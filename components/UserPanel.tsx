@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 const { Meta } = Card;
 
-export function UserPanel() {
+export function UserPanel({ close }: { close: () => void }) {
   const [user, actions] = useUserInfo();
   const router = useRouter();
   const logout = () => {
@@ -27,7 +27,7 @@ export function UserPanel() {
   };
   return (
     <>
-      {!user && <LoginPanel />}
+      {!user && <LoginPanel close={close} />}
       {user && (
         <div className='w-60  rounded-lg shadow-md'>
           <Card

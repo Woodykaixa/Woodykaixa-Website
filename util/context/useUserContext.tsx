@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 import { Simplify } from '../type';
-import { GitHubAPI, GitHubState } from '@/util/github';
 import { Err, OK, User } from '@/dto';
 
 type UserContextStates = User.AuthResp | null;
@@ -8,7 +7,6 @@ type UserContextActions = {
   setUser: (user: UserContextStates) => void;
   updateUser: (user: Simplify<Partial<NotNull<UserContextStates>>>) => void;
   fetchUser: () => Promise<Err.CommonResp>;
-  login: () => void;
 };
 export type UserContextType = [UserContextStates, UserContextActions];
 type NotNull<T> = T extends null ? never : T;
@@ -49,12 +47,6 @@ export function UserInfoContext({ children }: { children: ReactNode }) {
           };
         }
         return json as unknown as Err.CommonResp;
-      },
-      login: () => {
-        const state = GitHubState.get();
-        const a = document.createElement('a');
-        a.href = GitHubAPI.registerUrl(state);
-        a.click();
       },
     }),
     []
