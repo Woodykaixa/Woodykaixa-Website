@@ -1,12 +1,11 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Form, Input, Button, notification, Alert } from 'antd';
-import { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { User, Err, OK, Gh } from '@/dto';
+import { User, Err, OK } from '@/dto';
 import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 import { SiteConfig } from '@/config/site';
-import { JwtConfig } from '@/config/jwt';
 import { firstValue } from '@/util/api';
 
 const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
