@@ -7,8 +7,6 @@ import { HttpError, Unauthorized } from '@/util/error';
 export const middleware: NextMiddleware = async (req, event) => {
   // Add the user token to the response
   const token = req.cookies[JwtConfig.COOKIE_KEY];
-  console.log(req);
-  console.log(req.headers);
   try {
     const payload = verifyAuth(token);
     if (!payload.admin) {
