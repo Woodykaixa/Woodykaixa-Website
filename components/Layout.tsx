@@ -60,7 +60,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </Menu>
           <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel close={close} />}>
             {user ? (
-              <div className='flex items-center'>
+              <div className='flex items-center cursor-pointer'>
                 <Avatar src={user.avatar} size={40}></Avatar>
               </div>
             ) : (
