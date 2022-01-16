@@ -6,6 +6,7 @@ import { FormInstance } from 'antd/lib/form/hooks/useForm';
 import { User } from '@/dto';
 import styled from 'styled-components';
 import AvatarEditor from 'react-avatar-editor';
+import { getBase64 } from '@/util/upload';
 
 const Upload = styled(AntdUpload)`
   display: flex;
@@ -16,16 +17,6 @@ const Upload = styled(AntdUpload)`
     height: auto;
   }
 `;
-
-function getBase64(img: Blob) {
-  return new Promise<string>(res => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      res(reader.result as string);
-    });
-    reader.readAsDataURL(img);
-  });
-}
 
 const beforeUpload: UploadProps['beforeUpload'] = file => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
