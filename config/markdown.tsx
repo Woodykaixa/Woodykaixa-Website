@@ -4,6 +4,7 @@ import { MarkdownToJSX } from 'markdown-to-jsx';
 import { Hidden, Title as MyTitle } from '@/components/markdown';
 import { Comment } from '@/components/markdown/Comment';
 import { ReactNode } from 'react';
+import { OmniImage } from '@/components/markdown/OmniImage';
 const TypoWrapper = (props: { children: ReactNode }) => {
   return <Typography className='w-full'>{props.children}</Typography>;
 };
@@ -64,5 +65,13 @@ export const MarkdownOptions: MarkdownToJSX.Options = {
     cmt: {
       component: Comment,
     },
+  },
+};
+
+export const AdminOptions: MarkdownToJSX.Options = {
+  ...MarkdownOptions,
+  overrides: {
+    ...MarkdownOptions.overrides,
+    img: OmniImage,
   },
 };

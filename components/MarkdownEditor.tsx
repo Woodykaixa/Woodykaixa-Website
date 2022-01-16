@@ -1,10 +1,10 @@
-import { MarkdownOptions } from '@/config/markdown';
-import { Input, Menu, Button, Modal, Upload, UploadProps } from 'antd';
+import { AdminOptions, MarkdownOptions } from '@/config/markdown';
+import { Input, Menu, Button, Modal, Upload, UploadProps, message } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import { useState } from 'react';
-import { FileImageOutlined, PlusOutlined, CopyOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
-import { getBase64 } from '@/util/upload';
-import { Image, Image as ImageDTO } from '@/dto';
+import { FileImageOutlined, PlusOutlined, CopyOutlined } from '@ant-design/icons';
+import { Image } from '@/dto';
+import { useUserInfo } from '@/util/context/useUserContext';
 
 const UploadButton = () => (
   <div key='upload-button'>
@@ -32,11 +32,11 @@ export function MarkdownEditor({
   value,
   updateValue,
 }: MarkdownEditorProps) {
+  const [user] = useUserInfo();
   const [tab, setTab] = useState<TabType>('text');
   const [images, setImages] = useState<{ uid: string; name: string; url: string }[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const onChange: UploadProps['onChange'] = info => {
-    console.log(info);
     if (info.file.status === 'done') {
       setImages([
         ...images,
@@ -47,12 +47,6 @@ export function MarkdownEditor({
         },
       ]);
     } else if (info.file.status === 'removed') {
-      console.log(images);
-      console.log(info.file);
-      console.log(
-        'removed',
-        images.filter(img => img.uid !== info.file.uid)
-      );
       setImages([...images.filter(img => img.uid !== info.file.uid)]);
     }
   };
@@ -73,8 +67,10 @@ export function MarkdownEditor({
             downloadIcon: <CopyOutlined className='text-white opacity-80 hover:opacity-100' />,
           }}
           // 这里把下载按钮给换成了复制按钮，用来自动复制一个 ![name](url) 格式的 markdown
-          onDownload={e => {
-            console.log(e);
+          onDownload={file => {
+            navigator.clipboard.writeText(`![${file.name}](@${file.name})`).then(() => {
+              message.info('链接已复制');
+            });
           }}
         >
           <UploadButton />
@@ -93,9 +89,11 @@ export function MarkdownEditor({
         </Menu>
         {tab === 'text' && (
           <div>
-            <div className='flex w-full bg-white'>
-              <Button icon={<FileImageOutlined />} onClick={() => setShowUploadModal(true)} />
-            </div>
+            {user?.admin && (
+              <div className='flex w-full bg-white'>
+                <Button icon={<FileImageOutlined />} onClick={() => setShowUploadModal(true)} />
+              </div>
+            )}
 
             <Input.TextArea
               rows={editorRows}
@@ -111,7 +109,7 @@ export function MarkdownEditor({
         )}
         {tab === 'preview' && (
           <div className='bg-white px-4 min-h-40'>
-            <Markdown options={MarkdownOptions}>{value}</Markdown>
+            <Markdown options={user?.admin ? AdminOptions : MarkdownOptions}>{value}</Markdown>
           </div>
         )}
       </div>

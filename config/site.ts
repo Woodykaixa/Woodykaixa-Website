@@ -5,4 +5,5 @@ export const SiteConfig = {
    * Length of avatar's width and height, make is square
    */
   avatarSize: 250,
+  imageBucket: `https://${process.env.NEXT_PUBLIC_OSS_BUCKET}.${process.env.NEXT_PUBLIC_OSS_REGION}.aliyuncs.com/IMAGE/`,
 };
