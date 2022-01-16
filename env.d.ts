@@ -14,8 +14,8 @@ declare global {
       APP_ENV: 'development' | 'production' | 'staging';
       PORT?: string;
       NEXT_PUBLIC_BASE_URL: string;
-      OSS_BUCKET: string;
-      OSS_REGION: string;
+      NEXT_PUBLIC_OSS_BUCKET: string;
+      NEXT_PUBLIC_OSS_REGION: string;
       OSS_PUT_AUTH: string;
       ACCESS_KEY_ID: string;
       ACCESS_KEY_SECRET: string;
