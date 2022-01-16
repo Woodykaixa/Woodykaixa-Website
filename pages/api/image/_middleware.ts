@@ -1,5 +1,5 @@
 // eslint-disable-next-line @next/next/no-server-import-in-page
-import { NextResponse, NextMiddleware } from 'next/server';
+import { NextResponse, NextMiddleware, NextRequest } from 'next/server';
 import { JwtConfig } from '@/config/jwt';
 import { HttpError } from '@/util/error';
 import { requireAdmin } from '@/util/auth';
