@@ -6,7 +6,11 @@ import { github } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 export const Code = (props: { className: string; children: ReactNode }) => {
   console.log(props);
+  if (!props.className) {
+    return <code>{props.children}</code>;
+  }
   const language = props.className.replace('lang-', '');
+
   return (
     <div className='flex flex-col'>
       <div>
