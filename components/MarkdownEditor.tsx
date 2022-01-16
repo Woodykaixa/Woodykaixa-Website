@@ -4,7 +4,7 @@ import Markdown from 'markdown-to-jsx';
 import { useState } from 'react';
 import { FileImageOutlined, PlusOutlined, CopyOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getBase64 } from '@/util/upload';
-import Image from 'next/image';
+import { Image, Image as ImageDTO } from '@/dto';
 
 const UploadButton = () => (
   <div key='upload-button'>
@@ -38,16 +38,14 @@ export function MarkdownEditor({
   const onChange: UploadProps['onChange'] = info => {
     console.log(info);
     if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj!).then(dataUrl => {
-        setImages([
-          ...images,
-          {
-            uid: info.file.uid,
-            name: info.file.name,
-            url: dataUrl,
-          },
-        ]);
-      });
+      setImages([
+        ...images,
+        {
+          uid: info.file.uid,
+          name: info.file.name,
+          url: (info.file.response as Image.PutImageResp).File.url,
+        },
+      ]);
     } else if (info.file.status === 'removed') {
       console.log(images);
       console.log(info.file);
@@ -63,6 +61,12 @@ export function MarkdownEditor({
       <Modal closable onCancel={() => setShowUploadModal(false)} footer={null} visible={showUploadModal}>
         <Upload
           listType='picture-card'
+          action='/api/image/add'
+          method='POST'
+          name='content'
+          data={file => ({
+            size: file.size,
+          })}
           onChange={onChange}
           showUploadList={{
             showDownloadIcon: true,
