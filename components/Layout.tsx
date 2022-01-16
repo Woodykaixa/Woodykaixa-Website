@@ -1,15 +1,30 @@
-import { useState, ReactNode } from 'react';
-import { Layout, Menu, Dropdown } from 'antd';
-import { GithubOutlined } from '@ant-design/icons';
+import { useState, ReactNode, useEffect } from 'react';
+import { Layout, Menu, Dropdown, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { UserPanel } from './UserPanel';
+import { useUserInfo } from '@/util/context/useUserContext';
+
 const { Header, Content, Footer } = Layout;
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
+  const [user, { fetchUser }] = useUserInfo();
+  const { visible, open, close } = useDropdown();
+  useEffect(() => {
+    if (!user) {
+      console.log('try fetch user');
+      fetchUser();
+    }
+    // Update jwt per 25 minutes, so we won't get expire
+    setInterval(() => {
+      fetchUser();
+    }, 25 * 60 * 1000);
+  }, [user, fetchUser]);
 
+  console.log(user);
   return (
-    <Layout>
+    <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full '>
         <div className='flex h-full'>
           <div className='text-white  mr-6'>
@@ -43,8 +58,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link href='/me'>关于我</Link>
             </Menu.Item>
           </Menu>
-          <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel></UserPanel>}>
-            <GithubOutlined className='bg-white invert filter rounded-full my-3' style={{ fontSize: 40 }} />
+          <Dropdown placement='bottomRight' trigger={['click']} overlay={<UserPanel close={close} />}>
+            {user ? (
+              <div className='flex items-center cursor-pointer'>
+                <Avatar src={user.avatar} size={40}></Avatar>
+              </div>
+            ) : (
+              <UserOutlined
+                className='bg-white invert filter rounded-full my-3'
+                style={{ fontSize: 40 }}
+                onClick={open}
+              />
+            )}
           </Dropdown>
         </div>
       </Header>
@@ -54,12 +79,27 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           京ICP备20006005号
         </a>
         <p>
-          ©2021 Created by{' '}
+          ©2021-2022 Created by{' '}
           <a href='https://github.com/Woodykaixa' target='_blank' rel='noreferrer'>
             Woodykaixa
+          </a>
+          {' | '}
+          <a href='https://github.com/Woodykaixa/Woodykaixa-Website' target='_blank' rel='noreferrer'>
+            查看网站源代码
           </a>
         </p>
       </Footer>
     </Layout>
   );
+}
+
+function useDropdown() {
+  const [visible, setVisible] = useState(false);
+  const open = () => setVisible(true);
+  const close = () => setVisible(false);
+  return {
+    visible,
+    open,
+    close,
+  };
 }

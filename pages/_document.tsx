@@ -2,7 +2,6 @@ import * as React from 'react';
 // https://github.com/ant-design/ant-design/issues/30396#issuecomment-927299855
 // @ts-ignore Ugly fix ssr problem
 React.useLayoutEffect = React.useEffect;
-import { SiteConfig } from '../config';
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 class MyDocument extends Document {
@@ -35,9 +34,8 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang='zh-CN'>
-        <Head>
-          <title>{SiteConfig.title}</title>
-        </Head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <Head>{process.env.APP_ENV === 'development' && <script src='http://localhost:8097'></script>}</Head>
         <body style={{ backgroundColor: 'rgb(240, 242, 245)' }}>
           <Main />
           <NextScript />

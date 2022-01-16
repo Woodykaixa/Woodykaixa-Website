@@ -4,6 +4,9 @@ module.exports = {
   important: true,
   theme: {
     extend: {},
+    minHeight: {
+      40: '10rem',
+    },
   },
   plugins: [],
 };

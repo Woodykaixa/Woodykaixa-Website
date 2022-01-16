@@ -1,13 +1,25 @@
-import '../styles/globals.css';
+import '@/styles/globals.css';
 import 'antd/dist/antd.css';
-import Layout from '../components/Layout';
+import '@/styles/override.css';
+import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
+import { SiteConfig } from '@/config/site';
+import Head from 'next/head';
+import { UserInfoContext } from '@/util/context/useUserContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Head>
+        <title>{SiteConfig.title}</title>
+      </Head>
+
+      <UserInfoContext>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </UserInfoContext>
+    </>
   );
 }
 
