@@ -5,7 +5,6 @@ import { Button, message } from 'antd';
 import { github } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 export const Code = (props: { className: string; children: ReactNode }) => {
-  console.log(props);
   if (!props.className) {
     return <code>{props.children}</code>;
   }
