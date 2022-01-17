@@ -8,7 +8,7 @@ import { PostService } from '@/lib/services/post';
 export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.AddResp | Err.CommonResp>) {
   prismaClient
     .$connect()
-    .then(() => ensureMethod(req.method, ['GET']))
+    .then(() => ensureMethod(req.method, ['POST']))
     .then(() =>
       parseParam<Blog.AddDTO>(
         req.body,
@@ -30,7 +30,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.A
     )
     .then(async dto => {
       const content = Buffer.from(dto.content, 'utf-8');
-      return PostService.putPost(prismaClient, dto.title, content, dto.keywords, new Date(), dto.coverImageId);
+      return PostService.putPost(prismaClient, dto.title, content, dto.keywords, new Date(), dto.coverImageId ?? null);
     })
     .then(post => {
       res.status(OK.code).json(post);

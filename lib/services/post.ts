@@ -48,6 +48,7 @@ export namespace PostService {
         keywords,
         date,
         fileId: putFileResult.id,
+        comments: [],
       },
     });
   }

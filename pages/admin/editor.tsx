@@ -1,54 +1,52 @@
 import type { NextPage } from 'next';
-import { Tag, Input, Tooltip, Typography, Button, Form, notification, message } from 'antd';
-import Markdown from 'markdown-to-jsx';
-import { MarkdownOptions } from '@/config/markdown';
-import { useState, Component, useRef, FC, useMemo, useEffect } from 'react';
-import { File, OK, Oss } from '@/dto';
+import { Input, Button, Form, message } from 'antd';
+import { File, OK, Oss, Blog, Err } from '@/dto';
 import { MarkdownEditor } from '@/components/form/MarkdownEditor';
 import { useThrottledInput } from '@/util/hooks';
 import { KeywordEditor } from '@/components/form/KeywordEditor';
 
-// const Tag = styled(AntdTag)`
-//   & {
-//     display: flex;
-//     align-items: center;
-//   }
-// `;
-
 const EditorPage: NextPage = () => {
-  const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
+  const [form] = Form.useForm<Blog.AddDTO>();
   const [content, setContent] = useThrottledInput('', 500);
   const get = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
-      .then(async res => {
-        if (res.status === OK.code) {
-          return (await res.json()) as Oss.GetFileResp;
-        }
-        throw new Error('');
-      })
-      .then(json => {
-        form.setFieldsValue({
-          content: json.content,
-        });
-        setContent(json.content);
-      })
-      .catch(console.error);
+    // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
+    //   .then(async res => {
+    //     if (res.status === OK.code) {
+    //       return (await res.json()) as Oss.GetFileResp;
+    //     }
+    //     throw new Error('');
+    //   })
+    //   .then(json => {
+    //     form.setFieldsValue({
+    //       content: json.content,
+    //     });
+    //     setContent(json.content);
+    //   })
+    //   .catch(console.error);
   };
 
   const put = () => {
-    // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     ...form.getFieldsValue(),
-    //     encoding: 'utf8',
-    //     type: 'POST',
-    //     content: content,
-    //   } as File.PutFileDTO),
-    // });
-    console.log('form', form.getFieldsValue());
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form.getFieldsValue()),
+    })
+      .then(res => {
+        if (res.status === OK.code) {
+          return res.json() as Promise<Blog.AddResp>;
+        }
+        throw res.json() as Promise<Err.CommonResp>;
+      })
+      .then(resp => {
+        message.success('发布成功');
+        console.log(resp);
+      })
+      .catch(async err => {
+        message.error('发布失败');
+        console.error(await err);
+      });
   };
 
   return (
