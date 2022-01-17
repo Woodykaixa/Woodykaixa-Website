@@ -84,9 +84,9 @@ model PostFile {
   brief String
 
   /// cover image url
-  cover ImageFile @relation(fields: [coverImageId], references: [id])
+  cover ImageFile? @relation(fields: [coverImageId], references: [id])
 
-  coverImageId String @db.ObjectId
+  coverImageId String? @db.ObjectId
 
   keywords String[]
 

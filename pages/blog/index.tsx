@@ -5,29 +5,20 @@ import * as React from 'react';
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Err, OK } from '@/dto';
+import { Blog, Err, OK } from '@/dto';
 import { SiteConfig } from '@/config/site';
 import Head from 'next/head';
 import { SearchTags } from '@/util/search';
 
 const { Search } = Input;
-type PostType = {
-  id: string;
-  title: string;
-  cover: string;
-  description: string;
-  content: string;
-  createAt: Date;
-  keywords: string[];
-  comments: number;
-};
+type PostType = Blog.ListResp[number];
 
-const Post = ({ title, createAt, keywords, comments, content, id, description, cover }: PostType) => {
+const Post = ({ title, date, keywords, comments, brief, id, coverImageId }: PostType) => {
   return (
     <List.Item
       key={title}
       actions={[
-        <Space key='post-at'>{moment(createAt).format('yyyy-MM-DD')}</Space>,
+        <Space key='post-at'>{moment(date).format('yyyy-MM-DD')}</Space>,
         <Space key='comments'>
           <MessageOutlined /> {comments}
         </Space>,
@@ -37,10 +28,10 @@ const Post = ({ title, createAt, keywords, comments, content, id, description, c
           ))}
         </Space>,
       ]}
-      extra={<Image width={272} alt='cover' src={cover}></Image>}
+      extra={coverImageId && <Image width={272} alt='cover' src={coverImageId}></Image>}
     >
-      <List.Item.Meta title={<Link href={`/blog/${id}`}>{title}</Link>} description={description} />
-      {content}
+      <List.Item.Meta title={<Link href={`/blog/${id}`}>{title}</Link>} />
+      {brief}
     </List.Item>
   );
 };
