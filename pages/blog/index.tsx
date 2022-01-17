@@ -24,7 +24,9 @@ const Post = ({ title, date, keywords, comments, brief, id, coverImageId }: Post
         </Space>,
         <Space key='post-keywords'>
           {keywords.map(kw => (
-            <Tag key={kw}>{kw}</Tag>
+            <Tag key={kw} className='select-none'>
+              {kw}
+            </Tag>
           ))}
         </Space>,
       ]}
@@ -52,6 +54,7 @@ const Blog: NextPage<ServerSideProps> = ({ files }) => {
       <div className='bg-white p-6 flex flex-col items-center mt-8'>
         <div className='flex flex-col w-3/4 items-center'>
           <List
+            className='w-full'
             header={
               <Form
                 onFinish={e => {
