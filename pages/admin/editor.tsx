@@ -1,11 +1,19 @@
 import type { NextPage } from 'next';
-import { Input, Typography, Button, Form } from 'antd';
+import { Tag, Input, Tooltip, Typography, Button, Form, notification, message } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
-import { useState } from 'react';
+import { useState, Component, useRef, FC, useMemo, useEffect } from 'react';
 import { File, OK, Oss } from '@/dto';
-import { MarkdownEditor } from '@/components/MarkdownEditor';
+import { MarkdownEditor } from '@/components/form/MarkdownEditor';
 import { useThrottledInput } from '@/util/hooks';
+import { KeywordEditor } from '@/components/form/KeywordEditor';
+
+// const Tag = styled(AntdTag)`
+//   & {
+//     display: flex;
+//     align-items: center;
+//   }
+// `;
 
 const EditorPage: NextPage = () => {
   const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
@@ -28,18 +36,19 @@ const EditorPage: NextPage = () => {
   };
 
   const put = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...form.getFieldsValue(),
-        encoding: 'utf8',
-        type: 'POST',
-        content: content,
-      } as File.PutFileDTO),
-    });
+    // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     ...form.getFieldsValue(),
+    //     encoding: 'utf8',
+    //     type: 'POST',
+    //     content: content,
+    //   } as File.PutFileDTO),
+    // });
+    console.log('form', form.getFieldsValue());
   };
 
   return (
@@ -50,20 +59,23 @@ const EditorPage: NextPage = () => {
         autoComplete='on'
         className='items-center p-4  w-full'
         form={form}
-        initialValues={{ content: '12' }}
+        initialValues={{}}
       >
-        <Form.Item name='name' label='文件'>
+        <Form.Item name='title' label='标题'>
           <Input></Input>
         </Form.Item>
-        <Form.Item name='auth' label='密码'>
-          <Input></Input>
+        <Form.Item name='keywords' label='标签'>
+          <KeywordEditor />
         </Form.Item>
+
         <Form.Item label='actions'>
           <Button onClick={get}>get</Button>
           <Button onClick={put}>post</Button>
         </Form.Item>
         <div className='h-10'></div>
-        <MarkdownEditor value={content} updateValue={setContent}></MarkdownEditor>
+        <Form.Item name='content' wrapperCol={{ span: 24 }}>
+          <MarkdownEditor></MarkdownEditor>
+        </Form.Item>
       </Form>
     </div>
   );
