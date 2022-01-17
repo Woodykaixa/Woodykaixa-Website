@@ -8,4 +8,7 @@ export namespace Blog {
   };
 
   export type ListResp = Array<Simplify<Omit<PostFile, 'fileId' | 'comments'> & { comments: number }>>;
+
+  export type AddDTO = Simplify<Omit<PostFile, 'id' | 'fileId' | 'date' | 'comments' | 'brief'> & { content: string }>;
+  export type AddResp = Simplify<PostFile>;
 }

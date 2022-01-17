@@ -35,7 +35,7 @@ export namespace PostService {
     content: Buffer,
     keywords: string[],
     date: Date,
-    coverImageId: string
+    coverImageId: string | null
   ) {
     const brief = content.slice(0, 100).toString('utf-8').slice(0, 20);
 
