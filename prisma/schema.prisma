@@ -14,19 +14,21 @@ datasource db {
 /// Represent a User
 model User {
   /// MongoDB ObjectId
-  id       String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
   /// email to send notifications (maybe unused)
-  email    String  @unique
+  email      String   @unique
   /// Displayed user name
-  name     String
+  name       String
   /// A Hash string represents HASH(salt + password)
-  password String
+  password   String
   /// Blog URL
-  blog     String?
+  blog       String?
   /// Bio
-  bio      String?
+  bio        String?
   /// Is Admin. For now, there are only 1 admin, that's me!
-  admin    Boolean
+  admin      Boolean
+  /// Register date
+  registerAt DateTime
 
   /// user's avatars, latest -> oldest
   avatars   AvatarFile[] @relation

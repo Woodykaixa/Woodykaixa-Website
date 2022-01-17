@@ -38,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         bio: user.bio,
         admin: user.admin,
         avatar: avatar!.File.url,
+        registerAt: user.registerAt,
       };
       const jwt = signJwt(resp);
       setCookie(res, JwtConfig.COOKIE_KEY, jwt);

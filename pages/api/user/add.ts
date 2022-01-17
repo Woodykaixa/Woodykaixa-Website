@@ -71,6 +71,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         name: user.name,
         email: user.email,
         id: user.id,
+        registerAt: user.registerAt,
       });
     })
     .catch(errorHandler(res))
