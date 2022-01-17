@@ -2,7 +2,9 @@ import { Simplify } from '@/util/type';
 import type { User as UserModel } from '@prisma/client';
 
 export namespace User {
-  export type AddDTO = Simplify<Omit<UserModel, 'id' | 'admin' | 'avatarIds'> & { avatar: string; avatarSize: number }>;
+  export type AddDTO = Simplify<
+    Omit<UserModel, 'id' | 'admin' | 'avatarIds' | 'registerAt'> & { avatar: string; avatarSize: number }
+  >;
   export type AddResp = Simplify<Omit<UserModel, 'password' | 'avatarIds'>>;
 
   export type GetDTO = { githubId: number };

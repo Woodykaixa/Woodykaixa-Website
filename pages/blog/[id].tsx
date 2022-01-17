@@ -5,25 +5,37 @@ import * as React from 'react';
 import moment from 'moment';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Err, OK } from '@/dto';
+import { Blog, Err, OK } from '@/dto';
 import { SiteConfig } from '@/config/site';
 import { firstValue } from '@/util/api';
+import Head from 'next/head';
+import { AdminOptions } from '@/config/markdown';
+import Markdown from 'markdown-to-jsx';
 
-const Blog: NextPage<ServerSideProps> = ({ id }) => {
-  return <div className='h-screen w-full bg-white'>you are reading blog with post id: {id}</div>;
+const Blog: NextPage<ServerSideProps> = props => {
+  return (
+    <div className='h-screen w-full bg-white'>
+      <Markdown options={AdminOptions}>{props.content}</Markdown>
+    </div>
+  );
 };
 
 export default Blog;
-type ServerSideProps = {
-  id: string;
-};
+type ServerSideProps = Blog.GetResp;
+
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx => {
-  // 现在没有那么多数据，直接全量获取
-  // 我是懒狗
-  console.log(ctx.query);
+  const postResponse = await fetch(SiteConfig.url + '/api/blog/get?id=' + ctx.query.id);
+  const postData = (await postResponse.json()) as Blog.GetResp;
+  if (postResponse.status !== OK.code) {
+    const err = postData as unknown as Err.CommonResp;
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/error?err=${err.error}&desc=${encodeURIComponent(err.desc)}`,
+      },
+    };
+  }
   return {
-    props: {
-      id: firstValue(ctx.query.id)!,
-    },
+    props: postData,
   };
 };

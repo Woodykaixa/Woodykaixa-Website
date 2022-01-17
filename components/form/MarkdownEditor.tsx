@@ -1,10 +1,11 @@
 import { AdminOptions, MarkdownOptions } from '@/config/markdown';
 import { Input, Menu, Button, Modal, Upload, UploadProps, message } from 'antd';
 import Markdown from 'markdown-to-jsx';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { FileImageOutlined, PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { Image } from '@/dto';
 import { useUserInfo } from '@/util/context/useUserContext';
+import { AntdControlledProps } from '.';
 
 const UploadButton = () => (
   <div key='upload-button'>
@@ -18,9 +19,7 @@ export type MarkdownEditorProps = {
   editorRows?: number;
   className?: string;
   editorClassName?: string;
-  value: string;
-  updateValue: (value: string) => void;
-};
+} & AntdControlledProps<string>;
 
 type TabType = 'text' | 'preview';
 
@@ -29,9 +28,10 @@ export function MarkdownEditor({
   editorRows = 10,
   className,
   editorClassName,
-  value,
-  updateValue,
+  value = '',
+  onChange: antdOnChange,
 }: MarkdownEditorProps) {
+  const updateValue = useMemo(() => antdOnChange!, []);
   const [user] = useUserInfo();
   const [tab, setTab] = useState<TabType>('text');
   const [images, setImages] = useState<{ uid: string; name: string; url: string }[]>([]);
@@ -100,7 +100,7 @@ export function MarkdownEditor({
               disabled={!editable}
               autoSize={{ maxRows: 20 }}
               value={value}
-              className='resize-none min-h-40'
+              className={(editorClassName ?? '') + ' resize-none min-h-40'}
               onChange={e => {
                 updateValue(e.target.value);
               }}

@@ -53,6 +53,7 @@ export namespace UserService {
         admin: false,
         avatarIds,
         password: passwordHash,
+        registerAt: new Date(),
       },
     });
   }

@@ -7,7 +7,8 @@ type SchemaType<HttpParamType extends object = {}> = {
 
 export async function parseParam<HttpParamType extends object>(
   param: any,
-  schema: SchemaType<HttpParamType>
+  schema: SchemaType<HttpParamType>,
+  optionalFields?: Array<Extract<keyof HttpParamType, string>>
 ): Promise<HttpParamType> {
   const typedParam = param as HttpParamType;
   const expected = Object.keys(schema);
@@ -27,6 +28,9 @@ export async function parseParam<HttpParamType extends object>(
     unparsedKeys.delete(key);
     result[key] = parsed;
   }
+  optionalFields?.forEach(f => {
+    unparsedKeys.delete(f);
+  });
   if (unparsedKeys.size) {
     const keys = [] as string[];
     unparsedKeys.forEach(v => {

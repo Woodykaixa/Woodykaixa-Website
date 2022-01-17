@@ -26,5 +26,12 @@ export namespace Err {
 
   export type FileErrorType = typeof File[keyof typeof File];
 
-  export type ErrorType = UserErrorType | FileErrorType;
+  export const Blog = {
+    EXISTS: 'Post exists',
+    NOT_EXISTS: 'Post not exists',
+  } as const;
+
+  export type BlogErrorType = typeof File[keyof typeof File];
+
+  export type ErrorType = UserErrorType | FileErrorType | BlogErrorType;
 }

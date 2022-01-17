@@ -25,20 +25,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
     .$connect()
     .then(() => ensureMethod(req.method, ['POST']))
     .then(() =>
-      parseParam<User.AddDTO>(req.body, {
-        blog: param => ({
-          valid: true,
-          parsed: (param as string) ?? null,
-        }),
-        email: parseParam.parser.string,
-        name: parseParam.parser.string,
-        password: parseParam.parser.string,
-        bio: parseParam.parser.string,
-        avatar: parseParam.parser.secondaryCheck<string>(parseParam.parser.string, value =>
-          value.startsWith('data:image')
-        ),
-        avatarSize: parseParam.parser.int,
-      })
+      parseParam<User.AddDTO>(
+        req.body,
+        {
+          blog: param => ({
+            valid: true,
+            parsed: (param as string) ?? null,
+          }),
+          email: parseParam.parser.string,
+          name: parseParam.parser.string,
+          password: parseParam.parser.string,
+          bio: parseParam.parser.string,
+          avatar: parseParam.parser.secondaryCheck<string>(parseParam.parser.string, value =>
+            value.startsWith('data:image')
+          ),
+          avatarSize: parseParam.parser.int,
+        },
+        ['bio', 'blog']
+      )
     )
     .then(async dto => {
       {
@@ -71,6 +75,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         name: user.name,
         email: user.email,
         id: user.id,
+        registerAt: user.registerAt,
       });
     })
     .catch(errorHandler(res))

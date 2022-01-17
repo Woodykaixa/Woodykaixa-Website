@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         bio: result.bio,
         admin: result.admin,
         avatar: result.avatar,
+        registerAt: result.registerAt,
       });
       setCookie(res, JwtConfig.COOKIE_KEY, newAuth);
       res.status(200).json(result);

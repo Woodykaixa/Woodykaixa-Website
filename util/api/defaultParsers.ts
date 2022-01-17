@@ -70,11 +70,11 @@ const strLengthGt: (len: number) => ParamParser<string> = len => async param => 
   return secondaryCheck(param, string, param => param.length > len);
 };
 
-const array: ParamParser<Array<unknown>> = param => {
+const array = <T>(param: unknown) => {
   return {
     valid: isType(param, 'array'),
-    parsed: param as unknown[],
-  };
+    parsed: param as T[],
+  } as ParserResult<T[]>;
 };
 
 const boolean: ParamParser<boolean> = param => {

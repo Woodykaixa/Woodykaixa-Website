@@ -1,45 +1,52 @@
 import type { NextPage } from 'next';
-import { Input, Typography, Button, Form } from 'antd';
-import Markdown from 'markdown-to-jsx';
-import { MarkdownOptions } from '@/config/markdown';
-import { useState } from 'react';
-import { File, OK, Oss } from '@/dto';
-import { MarkdownEditor } from '@/components/MarkdownEditor';
+import { Input, Button, Form, message } from 'antd';
+import { File, OK, Oss, Blog, Err } from '@/dto';
+import { MarkdownEditor } from '@/components/form/MarkdownEditor';
 import { useThrottledInput } from '@/util/hooks';
+import { KeywordEditor } from '@/components/form/KeywordEditor';
 
 const EditorPage: NextPage = () => {
-  const [form] = Form.useForm<{ name: string; content: string; auth: string }>();
+  const [form] = Form.useForm<Blog.AddDTO>();
   const [content, setContent] = useThrottledInput('', 500);
   const get = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
-      .then(async res => {
-        if (res.status === OK.code) {
-          return (await res.json()) as Oss.GetFileResp;
-        }
-        throw new Error('');
-      })
-      .then(json => {
-        form.setFieldsValue({
-          content: json.content,
-        });
-        setContent(json.content);
-      })
-      .catch(console.error);
+    // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
+    //   .then(async res => {
+    //     if (res.status === OK.code) {
+    //       return (await res.json()) as Oss.GetFileResp;
+    //     }
+    //     throw new Error('');
+    //   })
+    //   .then(json => {
+    //     form.setFieldsValue({
+    //       content: json.content,
+    //     });
+    //     setContent(json.content);
+    //   })
+    //   .catch(console.error);
   };
 
   const put = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/put-or-update', {
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...form.getFieldsValue(),
-        encoding: 'utf8',
-        type: 'POST',
-        content: content,
-      } as File.PutFileDTO),
-    });
+      body: JSON.stringify(form.getFieldsValue()),
+    })
+      .then(res => {
+        if (res.status === OK.code) {
+          return res.json() as Promise<Blog.AddResp>;
+        }
+        throw res.json() as Promise<Err.CommonResp>;
+      })
+      .then(resp => {
+        message.success('发布成功');
+        console.log(resp);
+      })
+      .catch(async err => {
+        message.error('发布失败');
+        console.error(await err);
+      });
   };
 
   return (
@@ -50,20 +57,23 @@ const EditorPage: NextPage = () => {
         autoComplete='on'
         className='items-center p-4  w-full'
         form={form}
-        initialValues={{ content: '12' }}
+        initialValues={{}}
       >
-        <Form.Item name='name' label='文件'>
+        <Form.Item name='title' label='标题'>
           <Input></Input>
         </Form.Item>
-        <Form.Item name='auth' label='密码'>
-          <Input></Input>
+        <Form.Item name='keywords' label='标签'>
+          <KeywordEditor />
         </Form.Item>
+
         <Form.Item label='actions'>
           <Button onClick={get}>get</Button>
           <Button onClick={put}>post</Button>
         </Form.Item>
         <div className='h-10'></div>
-        <MarkdownEditor value={content} updateValue={setContent}></MarkdownEditor>
+        <Form.Item name='content' wrapperCol={{ span: 24 }}>
+          <MarkdownEditor></MarkdownEditor>
+        </Form.Item>
       </Form>
     </div>
   );
