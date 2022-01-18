@@ -3,7 +3,7 @@ import prismaClient from '@/lib/prisma';
 import { Blog, Err, OK } from '@/dto';
 import { ensureMethod, parseParam } from '@/util/api';
 import { BadRequest, errorHandler } from '@/util/error';
-import { FileService } from '@/lib/services';
+import { FileService, ImageService } from '@/lib/services';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.GetResp | Err.CommonResp>) {
   prismaClient
@@ -22,19 +22,23 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.G
 
         include: {
           Comments: true,
+          cover: {
+            select: {
+              File: true,
+            },
+          },
         },
       });
       if (!post) {
         throw new BadRequest(Err.Blog.NOT_EXISTS);
       }
-      const file = await FileService.getFile(prismaClient, post.title, 'POST');
-      return [post, file] as const;
+      return Promise.all([post, FileService.getFile(prismaClient, post.title, 'POST')]);
     })
     .then(([post, file]) => {
       res.status(OK.code).json({
         Comments: post.Comments,
         content: file.content,
-        coverImageId: post.coverImageId,
+        coverImageUrl: post.cover?.File.url ?? null,
         date: post.date,
         id: post.id,
         keywords: post.keywords,

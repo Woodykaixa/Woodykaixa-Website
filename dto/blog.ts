@@ -7,7 +7,11 @@ export namespace Blog {
 
   export type GetDTO = { id: string };
   export type GetResp = Simplify<
-    Omit<PostFile, 'comments' | 'fileId' | 'brief'> & { content: string; Comments: Comment[] }
+    Omit<PostFile, 'comments' | 'fileId' | 'brief' | 'coverImageId'> & {
+      content: string;
+      Comments: Comment[];
+      coverImageUrl: string | null;
+    }
   >;
 
   export type ListDTO = {
