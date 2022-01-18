@@ -7,6 +7,7 @@ import { Err, OK, Oss } from '@/dto';
 import Markdown from 'markdown-to-jsx';
 import { MarkdownOptions } from '@/config/markdown';
 import { CommentList } from '@/components/CommentList';
+import { SEOHeaders } from '@/components/SEOHeaders';
 
 const Home: NextPage<ServerSideProps> = props => {
   useEffect(() => {
@@ -24,13 +25,7 @@ const Home: NextPage<ServerSideProps> = props => {
 
   return (
     <>
-      <Head>
-        <meta name='og:title' content={SiteConfig.title} />
-        <meta name='og:type' content='website' />
-        {process.env.APP_ENV === 'production' && <meta name='og:url' content={process.env.NEXT_PUBLIC_BASE_URL} />}
-        <meta name='og:locale' content='zh_CN' />
-        <meta property='og:description' content="Woodykaixa's personal website. Blog, personal net dist, etc." />
-      </Head>
+      <SEOHeaders.Index description="Woodykaixa's personal website. Profile, blog, personal net dist, etc." />
       <div className='bg-white p-6 flex flex-col items-center mt-8'>
         <Alert
           message='暂时没有时间做多分辨率响应式布局，所以建议在宽度超过1536px的设备上浏览'

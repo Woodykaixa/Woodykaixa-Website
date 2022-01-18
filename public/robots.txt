@@ -1,0 +1,28 @@
+user-agent: *
+disallow: *
+
+user-agent: Googlebot
+allow: /blog/
+allow: /blog
+allow: /
+disallow: *
+
+
+user-agent: Twitterbot
+allow: /blog/
+allow: /blog
+allow: /
+disallow: *
+
+user-agent: Bingbot
+allow: /blog/
+allow: /blog
+allow: /
+disallow: *
+
+user-agent: Baiduspider
+allow: /blog/
+allow: /blog
+allow: /
+disallow: *
+

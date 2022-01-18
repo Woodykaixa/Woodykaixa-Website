@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app';
 import { SiteConfig } from '@/config/site';
 import Head from 'next/head';
 import { UserInfoContext } from '@/util/context/useUserContext';
-
+import { GlobalStateContext } from '@/util/context/useGlobalState';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -14,11 +14,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>{SiteConfig.title}</title>
       </Head>
 
-      <UserInfoContext>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </UserInfoContext>
+      <GlobalStateContext>
+        <UserInfoContext>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </UserInfoContext>
+      </GlobalStateContext>
     </>
   );
 }

@@ -9,6 +9,7 @@ import { Blog, Err, OK } from '@/dto';
 import { SiteConfig } from '@/config/site';
 import Head from 'next/head';
 import { SearchTags } from '@/util/search';
+import { SEOHeaders } from '@/components/SEOHeaders';
 
 const { Search } = Input;
 type PostType = Blog.ListResp[number];
@@ -41,16 +42,7 @@ const Post = ({ title, date, keywords, comments, brief, id, coverImageId }: Post
 const Blog: NextPage<ServerSideProps> = ({ files }) => {
   return (
     <>
-      <Head>
-        <meta name='og:title' content={'博客 | ' + SiteConfig.title} />
-        <title>博客 | {SiteConfig.title}</title>
-        <meta name='og:type' content='website' />
-        {process.env.APP_ENV === 'production' && (
-          <meta name='og:url' content={process.env.NEXT_PUBLIC_BASE_URL + '/blog'} />
-        )}
-        <meta name='og:locale' content='zh_CN' />
-        <meta property='og:description' content="Woodykaixa's personal website. Blog, personal net dist, etc." />
-      </Head>
+      <SEOHeaders.Index title='博客' description="Woodykaixa's blog" url='/blog' />
       <div className='bg-white p-6 flex flex-col items-center mt-8'>
         <div className='flex flex-col w-3/4 items-center'>
           <List
