@@ -40,6 +40,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
             value.startsWith('data:image')
           ),
           avatarSize: parseParam.parser.int,
+          isFriend: parseParam.parser.boolean,
         },
         ['bio', 'blog']
       )
@@ -53,7 +54,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         }
       }
 
-      const user = await UserService.createUser(prismaClient, dto.email, dto.name, dto.password, [], dto.blog, dto.bio);
+      const user = await UserService.createUser(
+        prismaClient,
+        dto.email,
+        dto.name,
+        dto.password,
+        [],
+        dto.isFriend,
+        dto.blog,
+        dto.bio
+      );
       const avatarBuffer = Buffer.from(dto.avatar.split(',')[1], 'base64');
       const avatar = await AvatarService.putAvatar(
         prismaClient,
@@ -76,6 +86,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<User.A
         email: user.email,
         id: user.id,
         registerAt: user.registerAt,
+        isFriend: user.isFriend,
       });
     })
     .catch(errorHandler(res))

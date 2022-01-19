@@ -38,6 +38,7 @@ export namespace UserService {
     name: string,
     password: string,
     avatarIds: string[],
+    isFriend: boolean,
     blog: string | null = null,
     bio: string | null = null
   ) {
@@ -54,6 +55,7 @@ export namespace UserService {
         avatarIds,
         password: passwordHash,
         registerAt: new Date(),
+        isFriend,
       },
     });
   }

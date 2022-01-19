@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Form, Input, Button, notification, Alert } from 'antd';
+import { Form, Input, Button, notification, Alert, Switch, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { User, Err, OK } from '@/dto';
@@ -7,6 +7,7 @@ import { AvatarUploader } from '@/components/AvatarUploader';
 import { HttpError } from '@/util/error';
 import { SiteConfig } from '@/config/site';
 import { firstValue } from '@/util/api';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const ReadableErrorTexts: Record<string, { description: string; message: string }> = {
   'User exists': {
@@ -91,6 +92,9 @@ const Login: NextPage<Props> = ({ callback }) => {
         className='items-center p-4 max-w-5xl w-full'
         form={form}
         onFinish={submit}
+        initialValues={{
+          isFriend: false,
+        }}
       >
         <Form.Item className='flex justify-center' name='avatarSize'></Form.Item>
         <Form.Item className='flex justify-center' name='avatar'>
@@ -162,6 +166,31 @@ const Login: NextPage<Props> = ({ callback }) => {
             className=' resize-none'
             placeholder='快来分享你有趣的灵魂⑧ !'
           />
+        </Form.Item>
+
+        <Form.Item label='添加至友链'>
+          <Space>
+            <Form.Item
+              name='isFriend'
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(rule, value) {
+                    const blog = getFieldValue('blog');
+                    if (!value || blog) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('blog'));
+                  },
+                }),
+              ]}
+              noStyle
+            >
+              <Switch />
+            </Form.Item>
+            <Tooltip title='sdfsaf'>
+              <QuestionCircleOutlined />
+            </Tooltip>
+          </Space>
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 16, span: 8 }}>

@@ -29,12 +29,13 @@ model User {
   admin      Boolean
   /// Register date
   registerAt DateTime
+  /// Present in friends list
+  isFriend   Boolean  @default(false)
 
   /// user's avatars, latest -> oldest
   avatars   AvatarFile[] @relation
   avatarIds String[]     @db.ObjectId
   Comment   Comment[]
-  Friend    Friend[]
 }
 
 /// A file stored in OSS service.
@@ -143,11 +144,4 @@ model Comment {
   /// comment to which post
   PostFile   PostFile? @relation(fields: [postFileId], references: [id])
   postFileId String?   @db.ObjectId
-}
-
-model Friend {
-  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-
-  User   User   @relation(fields: [userId], references: [id])
-  userId String @db.ObjectId
 }
