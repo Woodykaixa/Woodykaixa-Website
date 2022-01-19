@@ -3,9 +3,10 @@ import { Input, Menu, Button, Modal, Upload, UploadProps, message } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import { useState, useMemo } from 'react';
 import { FileImageOutlined, PlusOutlined, CopyOutlined } from '@ant-design/icons';
-import { Image } from '@/dto';
+import { Err, Image, OK } from '@/dto';
 import { useUserInfo } from '@/util/context/useUserContext';
 import { AntdControlledProps } from '.';
+import { getBase64 } from '@/util/upload';
 
 const UploadButton = () => (
   <div key='upload-button'>
@@ -37,6 +38,7 @@ export function MarkdownEditor({
   const [images, setImages] = useState<{ uid: string; name: string; url: string }[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const onChange: UploadProps['onChange'] = info => {
+    console.log('file on change', info.file);
     if (info.file.status === 'done') {
       setImages([
         ...images,
@@ -50,6 +52,35 @@ export function MarkdownEditor({
       setImages([...images.filter(img => img.uid !== info.file.uid)]);
     }
   };
+  const customRequest: UploadProps['customRequest'] = async options => {
+    const b64 = await getBase64(options.file as File);
+    fetch('/api/image/add', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: b64,
+        filename: (options.file as File).name,
+      } as Image.PutImageDTO),
+      credentials: 'include',
+    })
+      .then(async res => {
+        const json = await res.json();
+        if (res.status === OK.code) {
+          return json as Promise<Image.PutImageResp>;
+        }
+        throw json as Err.CommonResp;
+      })
+      .then(json => {
+        // @ts-ignore
+        options.onSuccess(json);
+      })
+      .catch(err => {
+        // @ts-ignore
+        options.onError(err);
+      });
+  };
   return (
     <>
       <Modal closable onCancel={() => setShowUploadModal(false)} footer={null} visible={showUploadModal}>
@@ -61,6 +92,7 @@ export function MarkdownEditor({
           data={file => ({
             size: file.size,
           })}
+          customRequest={customRequest}
           onChange={onChange}
           showUploadList={{
             showDownloadIcon: true,
