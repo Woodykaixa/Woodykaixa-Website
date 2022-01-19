@@ -27,10 +27,21 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.L
       return prismaClient.postFile.findMany({
         take: size,
         skip: size * page,
+        include: {
+          cover: {
+            select: {
+              File: true,
+            },
+          },
+        },
       });
     })
     .then(posts => {
-      const result = posts.map(post => ({ ...omit(post, 'fileId'), comments: post.comments.length }));
+      const result = posts.map(post => ({
+        ...omit(post, ['fileId', 'coverImageId']),
+        comments: post.comments.length,
+        coverImageUrl: post.cover?.File.url ?? null,
+      })) as Blog.ListResp;
       res.status(OK.code).json(result);
     })
     .catch(errorHandler(res))
