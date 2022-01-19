@@ -33,7 +33,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       setLoading(false);
     });
   };
-  console.log(user);
   return (
     <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full flex flex-col'>
