@@ -12,7 +12,7 @@ const Blog: NextPage<ServerSideProps> = props => {
   return (
     <>
       <SEOHeaders.Article title={props.title} description={props.brief} image={props.coverImageUrl} id={props.id} />
-      <div className='h-screen w-full bg-white flex flex-col items-center'>
+      <div className='min-h-screen w-full bg-white flex flex-col items-center'>
         <div className='w-3/4'>
           <PageHeader
             className='px-0 mt-4'
