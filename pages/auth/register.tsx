@@ -179,7 +179,7 @@ const Login: NextPage<Props> = ({ callback }) => {
                     if (!value || blog) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('blog'));
+                    return Promise.reject(new Error('添加友链需要填写你的主页'));
                   },
                 }),
               ]}
@@ -187,7 +187,7 @@ const Login: NextPage<Props> = ({ callback }) => {
             >
               <Switch />
             </Form.Item>
-            <Tooltip title='sdfsaf'>
+            <Tooltip title='勾选后会将你添加至友链。勾选以后随时可以取消。'>
               <QuestionCircleOutlined />
             </Tooltip>
           </Space>
