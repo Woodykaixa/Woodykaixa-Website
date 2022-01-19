@@ -18,5 +18,9 @@ export namespace Blog {
     page: number;
     size: number;
   };
-  export type ListResp = Array<Simplify<Omit<PostFile, 'fileId' | 'comments'> & { comments: number }>>;
+  export type ListResp = Array<
+    Simplify<
+      Omit<PostFile, 'fileId' | 'comments' | 'coverImageId'> & { comments: number; coverImageUrl: string | null }
+    >
+  >;
 }

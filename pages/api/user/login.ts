@@ -39,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         admin: user.admin,
         avatar: avatar!.File.url,
         registerAt: user.registerAt,
+        isFriend: user.isFriend,
       };
       const jwt = signJwt(resp);
       setCookie(res, JwtConfig.COOKIE_KEY, jwt);

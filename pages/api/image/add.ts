@@ -9,47 +9,18 @@ import busboy from 'busboy';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Image.PutImageResp | Err.CommonResp>) {
   ensureMethod(req.method, ['POST'])
-    .then(
-      () =>
-        new Promise<Image.PutImageDTO>((res, rej) => {
-          const bb = busboy({ headers: req.headers, defCharset: '7bit' });
-          const param = {} as Image.PutImageDTO;
-          let size = 0;
-          let content = '';
-          bb.on('file', (name, file, info) => {
-            if (name !== 'content') {
-              return;
-            }
-            const { filename, encoding, mimeType } = info;
-            param.filename = filename;
-            console.log(`File [${name}]: filename: %j, encoding: %j, mimeType: %j`, filename, encoding, mimeType);
-            file
-              .on('data', data => {
-                content += data.toString('base64');
-              })
-              .on('close', () => {});
-          });
-          bb.on('field', (name, val, info) => {
-            if (name === 'size') {
-              size = parseInt(val, 10);
-            }
-          });
-          bb.on('close', () => {
-            const size = imageSize(Buffer.from(content, 'base64'));
-            param.width = size.width!;
-            param.height = size.height!;
-            param.content = content;
-            res(param);
-          });
-          req.pipe(bb);
-        })
+    .then(() =>
+      parseParam<Image.PutImageDTO>(req.body, {
+        filename: parseParam.parser.strLengthGt(0),
+        content: parseParam.parser.secondaryCheck(parseParam.parser.string, value => value.startsWith('data:image')),
+      })
     )
     .then(async param => {
-      if (param.filename.length <= 0) {
-        throw new BadRequest('filename length <= 0');
-      }
-      const contentBuffer = Buffer.from(param.content, 'base64');
-      return ImageService.putImage(prismaClient, param.filename, contentBuffer, param.width, param.height);
+      const contentBuffer = Buffer.from(param.content.split(',')[1], 'base64');
+      const size = imageSize(contentBuffer);
+      console.log('image size', size.width, size.height);
+      console.log('buffer size', contentBuffer.length);
+      return ImageService.putImage(prismaClient, param.filename, contentBuffer, size.width ?? 0, size.height ?? 0);
     })
     .then(file => {
       res.status(OK.code).json(file);
@@ -59,6 +30,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Image.
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: {
+      sizeLimit: '4mb',
+    },
   },
 };

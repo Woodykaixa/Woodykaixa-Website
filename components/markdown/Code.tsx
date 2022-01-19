@@ -11,8 +11,8 @@ export const Code = (props: { className: string; children: ReactNode }) => {
   const language = props.className.replace('lang-', '');
 
   return (
-    <div className='flex flex-col'>
-      <div>
+    <div className='relative'>
+      <div className='absolute right-0'>
         <Button
           icon={<CopyOutlined />}
           onClick={e => {

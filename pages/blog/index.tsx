@@ -10,11 +10,15 @@ import { SiteConfig } from '@/config/site';
 import Head from 'next/head';
 import { SearchTags } from '@/util/search';
 import { SEOHeaders } from '@/components/SEOHeaders';
+import { useGlobalStates } from '@/util/context/useGlobalState';
+import { useRouter } from 'next/router';
 
 const { Search } = Input;
 type PostType = Blog.ListResp[number];
 
-const Post = ({ title, date, keywords, comments, brief, id, coverImageId }: PostType) => {
+const Post = ({ title, date, keywords, comments, brief, id, coverImageUrl }: PostType) => {
+  const router = useRouter();
+  const [, { setLoading }] = useGlobalStates();
   return (
     <List.Item
       key={title}
@@ -31,9 +35,25 @@ const Post = ({ title, date, keywords, comments, brief, id, coverImageId }: Post
           ))}
         </Space>,
       ]}
-      extra={coverImageId && <Image width={272} alt='cover' src={coverImageId}></Image>}
+      extra={
+        coverImageUrl && <Image width={272} alt='cover' src={coverImageUrl} height={'100%'} layout='intrinsic'></Image>
+      }
     >
-      <List.Item.Meta title={<Link href={`/blog/${id}`}>{title}</Link>} />
+      <List.Item.Meta
+        title={
+          <Link href={`/blog/${id}`} passHref>
+            <a
+              onClick={e => {
+                e.preventDefault();
+                setLoading(true);
+                router.push(`/blog/${id}`).then(() => setLoading(false));
+              }}
+            >
+              {title}
+            </a>
+          </Link>
+        }
+      />
       {brief}
     </List.Item>
   );
@@ -98,7 +118,7 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ctx
   // 现在没有那么多数据，直接全量获取
   // 我是懒狗
   const postResponse = await fetch(SiteConfig.url + '/api/blog/page?page=0&size=100');
-  const posts = await postResponse.json();
+  const posts = (await postResponse.json()) as Blog.ListResp;
   if (postResponse.status === OK.code) {
     return {
       props: {
