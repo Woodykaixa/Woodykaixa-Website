@@ -37,7 +37,7 @@ export namespace PostService {
     date: Date,
     coverImageId: string | null
   ) {
-    const brief = content.slice(0, 100).toString('utf-8').slice(0, 20);
+    const brief = content.slice(0, 200).toString('utf-8').slice(0, 100).split('\n')[0];
 
     const putFileResult = await FileService.putFile(prisma, title, content, 'POST');
     return await prisma.postFile.create({
