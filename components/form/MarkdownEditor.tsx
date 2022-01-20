@@ -1,12 +1,12 @@
-import { AdminOptions, MarkdownOptions } from '@/config/markdown';
+import { AdminOptions, MinimalOptions } from '@/config/markdown';
 import { Input, Menu, Button, Modal, Upload, UploadProps, message } from 'antd';
-import Markdown from 'markdown-to-jsx';
 import { useState, useMemo } from 'react';
 import { FileImageOutlined, PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { Err, Image, OK } from '@/dto';
 import { useUserInfo } from '@/util/context/useUserContext';
 import { AntdControlledProps } from '.';
 import { getBase64 } from '@/util/upload';
+import { MarkdownViewer } from '../MarkdownViewer';
 
 const UploadButton = () => (
   <div key='upload-button'>
@@ -141,7 +141,7 @@ export function MarkdownEditor({
         )}
         {tab === 'preview' && (
           <div className='bg-white px-4 min-h-40'>
-            <Markdown options={user?.admin ? AdminOptions : MarkdownOptions}>{value}</Markdown>
+            <MarkdownViewer components={user?.admin ? AdminOptions : MinimalOptions}>{value}</MarkdownViewer>
           </div>
         )}
       </div>

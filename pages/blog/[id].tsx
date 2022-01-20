@@ -4,10 +4,11 @@ import moment from 'moment';
 import { Blog, Err, OK } from '@/dto';
 import { SiteConfig } from '@/config/site';
 import { AdminOptions } from '@/config/markdown';
-import Markdown from 'markdown-to-jsx';
 import { PageHeader, Button, Tag, Typography, message } from 'antd';
 import { CommentOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { SEOHeaders } from '@/components/SEOHeaders';
+import { MarkdownViewer } from '@/components/MarkdownViewer';
+
 const Blog: NextPage<ServerSideProps> = props => {
   return (
     <>
@@ -46,10 +47,9 @@ const Blog: NextPage<ServerSideProps> = props => {
               </Button>,
             ]}
           ></PageHeader>
-
-          <Markdown options={AdminOptions}>
+          <MarkdownViewer components={AdminOptions}>
             {`发布于 ${moment(props.date).format('yyyy-MM-DD')}\n\n` + props.content}
-          </Markdown>
+          </MarkdownViewer>
         </div>
       </div>
     </>

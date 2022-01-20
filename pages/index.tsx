@@ -1,14 +1,10 @@
 import type { NextPage, GetServerSideProps } from 'next';
-import Head from 'next/head';
 import { notification, Alert } from 'antd';
 import { useEffect } from 'react';
-import { SiteConfig } from '@/config/site';
-import { Err, OK, Oss } from '@/dto';
-import Markdown from 'markdown-to-jsx';
-import { MarkdownOptions } from '@/config/markdown';
-import { CommentList } from '@/components/CommentList';
+import { Err, OK } from '@/dto';
+import { MinimalOptions } from '@/config/markdown';
 import { SEOHeaders } from '@/components/SEOHeaders';
-
+import { MarkdownViewer } from '@/components/MarkdownViewer';
 const Home: NextPage<ServerSideProps> = props => {
   useEffect(() => {
     console.log('APP_ENV:', props.mode);
@@ -34,8 +30,9 @@ const Home: NextPage<ServerSideProps> = props => {
           closable
         />
         <div className='flex flex-col w-3/4 items-center'>
-          <Markdown options={MarkdownOptions}>{props.err_or_content}</Markdown>
-          <CommentList />
+          <MarkdownViewer tableOfContent components={MinimalOptions}>
+            {props.err_or_content}
+          </MarkdownViewer>
         </div>
       </div>
     </>
