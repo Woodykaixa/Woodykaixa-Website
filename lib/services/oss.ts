@@ -35,4 +35,15 @@ export namespace OssService {
       type: meta.type,
     }));
   }
+
+  export async function deleteFile(filename: string) {
+    const result = await ossClient.delete(filename);
+    console.log('delete result', result);
+    // @ts-ignore
+    if (!result.res.status.toString(10).startsWith('2')) {
+      // @ts-ignore
+      throw new BadRequest(result.res.status.toString(10));
+    }
+    console.log('delete success');
+  }
 }

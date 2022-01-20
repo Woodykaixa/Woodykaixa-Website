@@ -7,7 +7,6 @@ import { KeywordEditor } from '@/components/form/KeywordEditor';
 
 const EditorPage: NextPage = () => {
   const [form] = Form.useForm<Blog.AddDTO>();
-  const [content, setContent] = useThrottledInput('', 500);
   const get = () => {
     // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
     //   .then(async res => {
@@ -57,7 +56,12 @@ const EditorPage: NextPage = () => {
         autoComplete='on'
         className='items-center p-4  w-full'
         form={form}
-        initialValues={{}}
+        onFinish={v => {
+          console.log('on finish', v);
+        }}
+        initialValues={{
+          content: '',
+        }}
       >
         <Form.Item name='title' label='标题'>
           <Input></Input>
@@ -68,7 +72,7 @@ const EditorPage: NextPage = () => {
 
         <Form.Item label='actions'>
           <Button onClick={get}>get</Button>
-          <Button onClick={put}>post</Button>
+          <Button htmlType={'submit'}>post</Button>
         </Form.Item>
         <div className='h-10'></div>
         <Form.Item name='content' wrapperCol={{ span: 24 }}>

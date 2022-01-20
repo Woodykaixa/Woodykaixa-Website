@@ -22,7 +22,6 @@ export async function parseParam<HttpParamType extends object>(
     const parser = schema[key];
     const { valid, parsed } = await parser(value);
     if (!valid) {
-      console.log(key, parsed, valid);
       throw new BadRequest(`param error: ${key}`);
     }
     unparsedKeys.delete(key);

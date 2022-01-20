@@ -26,4 +26,14 @@ export namespace ImageService {
       },
     });
   }
+
+  export async function deleteImageById(prisma: PrismaClient, id: string) {
+    const image = await prisma.imageFile.findFirst({
+      where: { id },
+    });
+    if (image) {
+      await FileService.deleteFile(prisma, image.fileId);
+      await prisma.imageFile.delete({ where: { id } });
+    }
+  }
 }
