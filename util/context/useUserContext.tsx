@@ -1,12 +1,13 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 import { Simplify } from '../type';
 import { Err, OK, User } from '@/dto';
+import useSWR from 'swr';
+import { fetcher } from '@/lib/fetcher';
 
 type UserContextStates = User.AuthResp | null;
 type UserContextActions = {
   setUser: (user: UserContextStates) => void;
   updateUser: (user: Simplify<Partial<NotNull<UserContextStates>>>) => void;
-  fetchUser: () => Promise<Err.CommonResp>;
 };
 export type UserContextType = [UserContextStates, UserContextActions];
 type NotNull<T> = T extends null ? never : T;
@@ -31,22 +32,6 @@ export function UserInfoContext({ children }: { children: ReactNode }) {
             ...user,
           };
         });
-      },
-      fetchUser: async () => {
-        const resp = await fetch(`/api/user/auth`, {
-          headers: {
-            'content-type': 'application/json',
-          },
-        });
-        const json = (await resp.json()) as User.AuthResp;
-        if (resp.status === OK.code) {
-          _setStates({ ...json });
-          return {
-            error: OK.text,
-            desc: OK.text,
-          };
-        }
-        return json as unknown as Err.CommonResp;
       },
     }),
     []
