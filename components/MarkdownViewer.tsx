@@ -4,7 +4,6 @@ import { notification, Alert } from 'antd';
 import { useEffect } from 'react';
 import { SiteConfig } from '@/config/site';
 import { Err, OK, Oss } from '@/dto';
-import { CommentList } from '@/components/CommentList';
 import { SEOHeaders } from '@/components/SEOHeaders';
 import Markdown from 'react-markdown';
 import remarkMath from 'remark-math';
