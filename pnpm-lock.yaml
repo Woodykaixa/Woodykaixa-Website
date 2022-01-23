@@ -36,7 +36,7 @@ importers:
       next: 12.0.7
       postcss: ^8.4.5
       prettier: ^2.5.1
-      prisma: ^3.7.0
+      prisma: ^3.8.0
       react: 17.0.2
       react-avatar-editor: ^12.0.0
       react-dom: 17.0.2
@@ -53,7 +53,7 @@ importers:
       typescript: 4.5.4
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
-      '@prisma/client': 3.8.1_prisma@3.7.0
+      '@prisma/client': 3.8.1_prisma@3.8.1
       '@types/react-syntax-highlighter': 13.5.2
       add: 2.0.6
       ali-oss: 6.16.0
@@ -67,7 +67,7 @@ importers:
       moment: 2.29.1
       nanoid: 3.1.30
       next: 12.0.7_react-dom@17.0.2+react@17.0.2
-      prisma: 3.7.0
+      prisma: 3.8.1
       react: 17.0.2
       react-avatar-editor: 12.0.0_react-dom@17.0.2+react@17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -721,7 +721,7 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@prisma/client/3.8.1_prisma@3.7.0:
+  /@prisma/client/3.8.1_prisma@3.8.1:
     resolution: {integrity: sha512-NxD1Xbkx1eT1mxSwo1RwZe665mqBETs0VxohuwNfFIxMqcp0g6d4TgugPxwZ4Jb4e5wCu8mQ9quMedhNWIWcZQ==, tarball: '@prisma/client/download/@prisma/client-3.8.1.tgz'}
     engines: {node: '>=12.6'}
     requiresBuild: true
@@ -732,15 +732,15 @@ packages:
         optional: true
     dependencies:
       '@prisma/engines-version': 3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f
-      prisma: 3.7.0
+      prisma: 3.8.1
     dev: false
 
   /@prisma/engines-version/3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f:
     resolution: {integrity: sha512-G2JH6yWt6ixGKmsRmVgaQYahfwMopim0u/XLIZUo2o/mZ5jdu7+BL+2V5lZr7XiG1axhyrpvlyqE/c0OgYSl3g==, tarball: '@prisma/engines-version/download/@prisma/engines-version-3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f.tgz'}
     dev: false
 
-  /@prisma/engines/3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f:
-    resolution: {integrity: sha512-W549ub5NlgexNhR8EFstA/UwAWq3Zq0w9aNkraqsozVCt2CsX+lK4TK7IW5OZVSnxHwRjrgEAt3r9yPy8nZQRg==, tarball: '@prisma/engines/download/@prisma/engines-3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f.tgz'}
+  /@prisma/engines/3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f:
+    resolution: {integrity: sha512-bHYubuItSN/DGYo36aDu7xJiJmK52JOSHs4MK+KbceAtwS20BCWadRgtpQ3iZ2EXfN/B1T0iCXlNraaNwnpU2w==, tarball: '@prisma/engines/download/@prisma/engines-3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f.tgz'}
     requiresBuild: true
     dev: false
 
@@ -4594,13 +4594,13 @@ packages:
     hasBin: true
     dev: true
 
-  /prisma/3.7.0:
-    resolution: {integrity: sha512-pzgc95msPLcCHqOli7Hnabu/GRfSGSUWl5s2P6N13T/rgMB+NNeKbxCmzQiZT2yLOeLEPivV6YrW1oeQIwJxcg==, tarball: prisma/download/prisma-3.7.0.tgz}
+  /prisma/3.8.1:
+    resolution: {integrity: sha512-Q8zHwS9m70TaD7qI8u+8hTAmiTpK+IpvRYF3Rgb/OeWGQJOMgZCFFvNCiSfoLEQ95wilK7ctW3KOpc9AuYnRUA==, tarball: prisma/download/prisma-3.8.1.tgz}
     engines: {node: '>=12.6'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f
+      '@prisma/engines': 3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f
     dev: false
 
   /prismjs/1.25.0:
