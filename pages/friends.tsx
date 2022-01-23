@@ -2,6 +2,7 @@ import { SiteConfig } from '@/config/site';
 import { OK, User } from '@/dto';
 import { List, Avatar } from 'antd';
 import type { GetServerSideProps, NextPage } from 'next';
+import Link from 'next/link';
 
 const Friends: NextPage<ServerSideProps> = ({ friends }) => {
   return (
@@ -17,7 +18,13 @@ const Friends: NextPage<ServerSideProps> = ({ friends }) => {
                 <List.Item>
                   <List.Item.Meta
                     avatar={<Avatar src={friend.avatar} size={{ xs: 64, sm: 64, md: 64, lg: 64, xl: 80, xxl: 80 }} />}
-                    title={<a href={friend.blog}>{friend.name}</a>}
+                    title={
+                      <Link href={friend.blog} passHref>
+                        <a target='_blank' rel='noreferrer'>
+                          {friend.name}
+                        </a>
+                      </Link>
+                    }
                     description={friend.blog}
                   />
                   {friend.bio}
