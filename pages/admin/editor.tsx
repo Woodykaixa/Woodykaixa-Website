@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import { Input, Button, Form, message, Switch } from 'antd';
+import { Input, Button, Form, message, Switch, Space } from 'antd';
 import { File, OK, Oss, Blog, Err } from '@/dto';
 import { MarkdownEditor, EditorTabType, ImageReferenceContext } from '@/components/form/MarkdownEditor';
 import { useThrottledInput } from '@/util/hooks';
@@ -59,6 +59,38 @@ const EditorPage: NextPage = () => {
       });
   };
 
+  const updatePost = () => {
+    const values = form.getFieldsValue();
+    const dto: Blog.OverrideDTO = {
+      content: values.content,
+      hasCover: values.hasCover,
+      keywords: values.keywords,
+      title: values.title,
+      referencedImages: uniq(countImage.current.siteImages),
+    };
+    fetch('/api/blog/admin/override', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dto),
+    })
+      .then(res => {
+        if (res.status === OK.code) {
+          return res.json() as Promise<Blog.OverrideDTO>;
+        }
+        throw res.json() as Promise<Err.CommonResp>;
+      })
+      .then(resp => {
+        message.success('发布成功');
+        console.log(resp);
+      })
+      .catch(async err => {
+        message.error('发布失败');
+        console.error(await err);
+      });
+  };
+
   return (
     <div>
       <Form
@@ -97,10 +129,15 @@ const EditorPage: NextPage = () => {
         </Form.Item>
 
         <Form.Item label='actions'>
-          <Button onClick={fetchPost}>get</Button>
-          <Button htmlType={'submit'} disabled={tab === 'text'}>
-            post
-          </Button>
+          <Space>
+            <Button onClick={fetchPost}>get</Button>
+            <Button htmlType={'submit'} disabled={tab === 'text'}>
+              post
+            </Button>
+            <Button onClick={updatePost} disabled={tab === 'text'}>
+              update
+            </Button>
+          </Space>
         </Form.Item>
         <div className='h-10'></div>
         <Form.Item name='content' wrapperCol={{ span: 24 }}>

@@ -25,6 +25,14 @@ export namespace Blog {
     }
   >;
 
+  export type OverrideDTO = Simplify<
+    Omit<PostFile, 'id' | 'fileId' | 'date' | 'comments' | 'brief' | 'referencedImageIds'> & {
+      content: string;
+      referencedImages: string[];
+    }
+  >;
+  export type OverrideResp = { status: 'ok' };
+
   export type ListDTO = {
     page: number;
     size: number;
