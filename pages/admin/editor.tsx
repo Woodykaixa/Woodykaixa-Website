@@ -11,25 +11,27 @@ const EditorPage: NextPage = () => {
   const [form] = Form.useForm<Omit<Blog.AddDTO, 'referencedImages'>>();
   const [tab, setTab] = useState<EditorTabType>('text');
   const get = () => {
-    // fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?name=' + form.getFieldsValue().name)
-    //   .then(async res => {
-    //     if (res.status === OK.code) {
-    //       return (await res.json()) as Oss.GetFileResp;
-    //     }
-    //     throw new Error('');
-    //   })
-    //   .then(json => {
-    //     form.setFieldsValue({
-    //       content: json.content,
-    //     });
-    //     setContent(json.content);
-    //   })
-    //   .catch(console.error);
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?type=POST&name=' + form.getFieldValue('title'))
+      .then(async res => {
+        if (res.status === OK.code) {
+          return (await res.json()) as Oss.GetFileResp;
+        }
+        const err = (await res.json()) as Err.CommonResp;
+        const error = new Error(err.desc);
+        error.name = err.error;
+        throw error;
+      })
+      .then(json => {
+        form.setFieldsValue({
+          content: json.content,
+        });
+      })
+      .catch(console.error);
   };
   const countImage = useRef<ImageReferenceContext>({ siteImages: [] });
 
   const createPost = (values: Omit<Blog.AddDTO, 'referencedImages'>) => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/add', {
+    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/admin/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

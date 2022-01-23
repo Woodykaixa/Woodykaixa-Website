@@ -5,9 +5,6 @@ import { HttpError } from '@/util/error';
 import { requireAdmin } from '@/util/auth';
 
 export const middleware: NextMiddleware = async (req, event) => {
-  if (req.url.includes('get-file')) {
-    return NextResponse.next();
-  }
   try {
     requireAdmin(req.cookies[JwtConfig.COOKIE_KEY]);
     return NextResponse.next();

@@ -3,7 +3,7 @@ import prismaClient from '@/lib/prisma';
 import { Blog, Err, OK } from '@/dto';
 import { ensureMethod, parseParam } from '@/util/api';
 import { BadRequest, errorHandler } from '@/util/error';
-import { FileService, ImageService } from '@/lib/services';
+import { FileService } from '@/lib/services';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.GetResp | Err.CommonResp>) {
   prismaClient
