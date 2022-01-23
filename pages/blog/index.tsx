@@ -36,7 +36,9 @@ const Post = ({ title, date, keywords, comments, brief, id, coverImageUrl }: Pos
         </Space>,
       ]}
       extra={
-        coverImageUrl && <Image width={272} alt='cover' src={coverImageUrl} height={'100%'} layout='intrinsic'></Image>
+        coverImageUrl && (
+          <Image width={'100%'} alt='cover' src={coverImageUrl} height={'100%'} objectFit='contain'></Image>
+        )
       }
     >
       <List.Item.Meta
