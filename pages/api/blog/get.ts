@@ -22,11 +22,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.G
 
         include: {
           Comments: true,
-          cover: {
-            select: {
-              File: true,
-            },
-          },
         },
       });
       if (!post) {
@@ -38,10 +33,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.G
       res.status(OK.code).json({
         Comments: post.Comments,
         content: file.content,
-        coverImageUrl: post.cover?.File.url ?? null,
         date: post.date,
         id: post.id,
         keywords: post.keywords,
+        hasCover: post.hasCover,
         title: post.title,
       });
     })

@@ -17,10 +17,15 @@ export type MarkdownEditorProps = {
   editorRows?: number;
   className?: string;
   editorClassName?: string;
+  tab: EditorTabType;
+  setTab: (tab: EditorTabType) => void;
+  context?: ImageReferenceContext;
 } & AntdControlledProps<string>;
 
-type TabType = 'text' | 'preview';
-
+export type EditorTabType = 'text' | 'preview';
+export type ImageReferenceContext = {
+  siteImages: string[];
+};
 function useImageList() {
   const { data, error } = useSWR<Image.ListImageResp, Err.CommonResp>('/api/image/list?page=0&size=100', fetcher);
 
@@ -37,10 +42,12 @@ export function MarkdownEditor({
   editorClassName,
   value = '',
   onChange: antdOnChange,
+  tab,
+  setTab,
+  context,
 }: MarkdownEditorProps) {
   const updateValue = useMemo(() => antdOnChange!, []);
   const [user] = useUserInfo();
-  const [tab, setTab] = useState<TabType>('text');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const { images, error } = useImageList();
   if (error) {
@@ -56,7 +63,7 @@ export function MarkdownEditor({
           mode='horizontal'
           selectedKeys={[tab]}
           onClick={e => {
-            setTab(e.key as TabType);
+            setTab(e.key as EditorTabType);
           }}
         >
           <Menu.Item key='text'>编辑</Menu.Item>
@@ -84,10 +91,45 @@ export function MarkdownEditor({
         )}
         {tab === 'preview' && (
           <div className='bg-white px-4 min-h-40'>
-            <MarkdownViewer components={user?.admin ? AdminOptions : MinimalOptions}>{value}</MarkdownViewer>
+            <MarkdownViewer
+              components={
+                user?.admin
+                  ? context
+                    ? {
+                        ...AdminOptions,
+                        img({ className, alt, src }) {
+                          return <CountRefImage context={context} alt={alt} src={src}></CountRefImage>;
+                        },
+                      }
+                    : AdminOptions
+                  : MinimalOptions
+              }
+            >
+              {value}
+            </MarkdownViewer>
           </div>
         )}
       </div>
     </>
   );
+}
+
+function CountRefImage({
+  src = '',
+  alt,
+  context,
+  className,
+}: {
+  src?: string;
+  alt?: string;
+  context: ImageReferenceContext;
+  className?: string;
+}) {
+  useEffect(() => {
+    context.siteImages.push(src);
+    return () => {
+      context.siteImages = context.siteImages.filter(i => i !== src);
+    };
+  }, [src, context]);
+  return <OmniImage src={src} alt={alt} className={className}></OmniImage>;
 }

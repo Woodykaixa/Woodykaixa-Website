@@ -35,7 +35,8 @@ export namespace PostService {
     content: Buffer,
     keywords: string[],
     date: Date,
-    coverImageId: string | null
+    referencedImageIds: string[],
+    hasCover: boolean
   ) {
     const brief = content.slice(0, 200).toString('utf-8').slice(0, 100).split('\n')[0];
 
@@ -44,7 +45,8 @@ export namespace PostService {
       data: {
         title,
         brief,
-        coverImageId,
+        hasCover,
+        referencedImageIds,
         keywords,
         date,
         fileId: putFileResult.id,
