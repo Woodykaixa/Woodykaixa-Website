@@ -11,6 +11,15 @@ export namespace ImageService {
     });
   }
 
+  export async function getImageByName(prisma: PrismaClient, name: string) {
+    return prisma.imageFile.findFirst({
+      where: { filename: name },
+      include: {
+        File: true,
+      },
+    });
+  }
+
   export async function putImage(prisma: PrismaClient, name: string, content: Buffer, width: number, height: number) {
     const file = await FileService.putFile(prisma, name, content, 'IMAGE');
 
@@ -25,5 +34,15 @@ export namespace ImageService {
         File: true,
       },
     });
+  }
+
+  export async function deleteImageById(prisma: PrismaClient, id: string) {
+    const image = await prisma.imageFile.findFirst({
+      where: { id },
+    });
+    if (image) {
+      await FileService.deleteFile(prisma, image.fileId);
+      await prisma.imageFile.delete({ where: { id } });
+    }
   }
 }

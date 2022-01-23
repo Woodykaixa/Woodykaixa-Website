@@ -9,12 +9,16 @@ export type KeywordEditorProps = AntdControlledProps<string[]>;
 
 export const KeywordEditor = ({ value, onChange }: KeywordEditorProps) => {
   const changeValue = useMemo(() => onChange!, []);
+  const [tags, setTags] = useState<string[]>([]);
+  useEffect(() => {
+    setTags(uniq(value ?? []));
+  }, [value]);
+
   useEffect(() => {
     if (!value) {
       changeValue([]);
     }
   });
-  const [tags, setTags] = useState<string[]>(uniq(value ?? []));
   const [showInput, setShowInput] = useState(false);
   const inputRef = useRef<Input>(null);
   const [inputValue, setInputValue] = useThrottledInput('');

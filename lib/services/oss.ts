@@ -6,6 +6,7 @@ export namespace OssService {
   export async function getFile(name: string): Promise<string> {
     const result = await ossClient.get(name);
     if (result.res.status !== OK.code) {
+      console.error('OssService.getFile error', result);
       throw new BadRequest(result.res.status.toString(10));
     }
     return result.content.toString();
@@ -34,5 +35,16 @@ export namespace OssService {
       path: meta.name,
       type: meta.type,
     }));
+  }
+
+  export async function deleteFile(filename: string) {
+    const result = await ossClient.delete(filename);
+    console.log('delete result', result);
+    // @ts-ignore
+    if (!result.res.status.toString(10).startsWith('2')) {
+      // @ts-ignore
+      throw new BadRequest(result.res.status.toString(10));
+    }
+    console.log('delete success');
   }
 }

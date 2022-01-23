@@ -39,6 +39,7 @@ export class MethodNotAllowed extends HttpError {
 
 export function errorHandler(response: NextApiResponse<Err.CommonResp>) {
   return function (err: any) {
+    console.error('error log', err);
     if (err instanceof Error) {
       response.status(err instanceof HttpError ? err.code : 500).json({
         error: err.name,

@@ -1,7 +1,8 @@
 import { SiteConfig } from '@/config/site';
 import Image from 'next/image';
+import { CSSProperties } from 'styled-components';
 
-export function OmniImage(props: { alt: string; src: string; className: string }) {
+export function OmniImage(props: { alt?: string; src: string; className?: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img

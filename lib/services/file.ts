@@ -39,4 +39,17 @@ export namespace FileService {
       },
     });
   }
+
+  export async function deleteFile(prisma: PrismaClient, id: string) {
+    const file = await prisma.file.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!file) {
+      return;
+    }
+    await OssService.deleteFile(file.filename);
+    await prisma.file.delete({ where: { id } });
+  }
 }

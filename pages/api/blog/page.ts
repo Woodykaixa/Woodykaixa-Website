@@ -28,8 +28,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.L
         take: size,
         skip: size * page,
         include: {
-          cover: {
-            select: {
+          referencedImages: {
+            include: {
               File: true,
             },
           },
@@ -40,7 +40,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.L
       const result = posts.map(post => ({
         ...omit(post, ['fileId', 'coverImageId']),
         comments: post.comments.length,
-        coverImageUrl: post.cover?.File.url ?? null,
+        coverImageUrl: post.hasCover ? post.referencedImages[0].File.url ?? null : null,
       })) as Blog.ListResp;
       res.status(OK.code).json(result);
     })

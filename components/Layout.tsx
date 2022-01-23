@@ -1,4 +1,4 @@
-import { useState, ReactNode, useEffect } from 'react';
+import { useState, ReactNode } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Spin, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -6,33 +6,39 @@ import { UserPanel } from './UserPanel';
 import { useUserInfo } from '@/util/context/useUserContext';
 import { useGlobalStates } from '@/util/context/useGlobalState';
 import { useRouter } from 'next/router';
-import { Url } from 'url';
 import { SiteConfig } from '@/config/site';
+import useSWR from 'swr';
+import { Err, User } from '@/dto';
+import { fetcher } from '@/lib/fetcher';
 
 const { Header, Content, Footer } = Layout;
 
+function useFetchUser() {
+  const { data, error } = useSWR<User.AuthResp, Err.CommonResp>(`/api/user/auth`, fetcher);
+  const [, { setUser }] = useUserInfo();
+  if (!error && data) {
+    setUser(data);
+  } else {
+    setUser(null);
+  }
+  console.log('fetch user', data, error);
+}
+
 export default function AppLayout({ children }: { children: ReactNode }) {
   const [currentMenuItem, setCurrentMenuItem] = useState('index');
-  const [user, { fetchUser }] = useUserInfo();
+  const [user] = useUserInfo();
   const { visible, open, close } = useDropdown();
   const [{ loading }, { setLoading }] = useGlobalStates();
   const router = useRouter();
-  useEffect(() => {
-    if (!user) {
-      console.log('try fetch user');
-      fetchUser();
-    }
-    // Update jwt per 25 minutes, so we won't get expire
-    setInterval(() => {
-      fetchUser();
-    }, 25 * 60 * 1000);
-  }, [user, fetchUser]);
+  useFetchUser();
+
   const navigate = (url: string) => {
     setLoading(true);
     router.push(url).then(() => {
       setLoading(false);
     });
   };
+
   return (
     <Layout className='min-h-screen'>
       <Header className='fixed z-10 w-full flex flex-col'>
