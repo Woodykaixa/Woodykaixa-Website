@@ -12,9 +12,10 @@ export namespace Blog {
 
   export type GetDTO = { id: string };
   export type GetResp = Simplify<
-    Omit<PostFile, 'comments' | 'fileId' | 'brief' | 'referencedImageIds'> & {
+    Omit<PostFile, 'comments' | 'fileId' | 'brief' | 'referencedImageIds' | 'hasCover'> & {
       content: string;
       Comments: Comment[];
+      coverImageUrl: string | null;
     }
   >;
 

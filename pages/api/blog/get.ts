@@ -22,6 +22,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.G
 
         include: {
           Comments: true,
+          referencedImages: {
+            include: {
+              File: true,
+            },
+          },
         },
       });
       if (!post) {
@@ -36,7 +41,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Blog.G
         date: post.date,
         id: post.id,
         keywords: post.keywords,
-        hasCover: post.hasCover,
+        coverImageUrl: post.hasCover ? post.referencedImages[0]?.File.url ?? null : null,
         title: post.title,
       });
     })
