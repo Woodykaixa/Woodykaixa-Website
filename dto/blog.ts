@@ -18,6 +18,13 @@ export namespace Blog {
     }
   >;
 
+  export type GetByTitleDTO = { title: string };
+  export type GetByTitleResp = Simplify<
+    Omit<PostFile, 'comments' | 'fileId' | 'brief' | 'referencedImageIds' | 'date'> & {
+      content: string;
+    }
+  >;
+
   export type ListDTO = {
     page: number;
     size: number;

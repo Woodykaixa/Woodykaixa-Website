@@ -6,6 +6,7 @@ export namespace OssService {
   export async function getFile(name: string): Promise<string> {
     const result = await ossClient.get(name);
     if (result.res.status !== OK.code) {
+      console.error('OssService.getFile error', result);
       throw new BadRequest(result.res.status.toString(10));
     }
     return result.content.toString();

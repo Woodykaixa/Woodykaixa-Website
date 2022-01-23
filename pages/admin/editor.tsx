@@ -10,11 +10,11 @@ import { uniq } from 'lodash';
 const EditorPage: NextPage = () => {
   const [form] = Form.useForm<Omit<Blog.AddDTO, 'referencedImages'>>();
   const [tab, setTab] = useState<EditorTabType>('text');
-  const get = () => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/file/get-file?type=POST&name=' + form.getFieldValue('title'))
+  const fetchPost = () => {
+    fetch('/api/blog/admin/get-by-title?title=' + form.getFieldValue('title'))
       .then(async res => {
         if (res.status === OK.code) {
-          return (await res.json()) as Oss.GetFileResp;
+          return (await res.json()) as Blog.GetByTitleResp;
         }
         const err = (await res.json()) as Err.CommonResp;
         const error = new Error(err.desc);
@@ -24,6 +24,8 @@ const EditorPage: NextPage = () => {
       .then(json => {
         form.setFieldsValue({
           content: json.content,
+          hasCover: json.hasCover,
+          keywords: json.keywords,
         });
       })
       .catch(console.error);
@@ -31,7 +33,7 @@ const EditorPage: NextPage = () => {
   const countImage = useRef<ImageReferenceContext>({ siteImages: [] });
 
   const createPost = (values: Omit<Blog.AddDTO, 'referencedImages'>) => {
-    fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/admin/add', {
+    fetch('/api/blog/admin/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -95,7 +97,7 @@ const EditorPage: NextPage = () => {
         </Form.Item>
 
         <Form.Item label='actions'>
-          <Button onClick={get}>get</Button>
+          <Button onClick={fetchPost}>get</Button>
           <Button htmlType={'submit'} disabled={tab === 'text'}>
             post
           </Button>
