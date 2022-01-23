@@ -29,10 +29,6 @@ const EditorPage: NextPage = () => {
   const countImage = useRef<ImageReferenceContext>({ siteImages: [] });
 
   const createPost = (values: Omit<Blog.AddDTO, 'referencedImages'>) => {
-    console.log('dto', {
-      ...values,
-      referencedImages: uniq(countImage.current.siteImages),
-    });
     fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/blog/add', {
       method: 'POST',
       headers: {
@@ -76,7 +72,20 @@ const EditorPage: NextPage = () => {
         <Form.Item name='title' label='标题'>
           <Input></Input>
         </Form.Item>
-        <Form.Item name='hasCover' label='使用第一张图作为封面'>
+        <Form.Item
+          name='hasCover'
+          label='使用第一张图作为封面'
+          rules={[
+            () => ({
+              validator(_, value) {
+                if (countImage.current.siteImages.length === 0 && value === true) {
+                  return Promise.reject(new Error('未引用图片'));
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
           <Switch></Switch>
         </Form.Item>
         <Form.Item name='keywords' label='标签'>
