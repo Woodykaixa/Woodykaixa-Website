@@ -5,7 +5,7 @@ importers:
   .:
     specifiers:
       '@ant-design/icons': ^4.7.0
-      '@prisma/client': ^3.7.0
+      '@prisma/client': ^3.8.0
       '@types/ali-oss': ^6.16.2
       '@types/bcrypt': ^5.0.0
       '@types/busboy': ^1.3.0
@@ -53,7 +53,7 @@ importers:
       typescript: 4.5.4
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
-      '@prisma/client': 3.7.0_prisma@3.7.0
+      '@prisma/client': 3.8.1_prisma@3.7.0
       '@types/react-syntax-highlighter': 13.5.2
       add: 2.0.6
       ali-oss: 6.16.0
@@ -721,8 +721,8 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@prisma/client/3.7.0_prisma@3.7.0:
-    resolution: {integrity: sha512-fUJMvBOX5C7JPc0e3CJD6Gbelbu4dMJB4ScYpiht8HMUnRShw20ULOipTopjNtl6ekHQJ4muI7pXlQxWS9nMbw==, tarball: '@prisma/client/download/@prisma/client-3.7.0.tgz'}
+  /@prisma/client/3.8.1_prisma@3.7.0:
+    resolution: {integrity: sha512-NxD1Xbkx1eT1mxSwo1RwZe665mqBETs0VxohuwNfFIxMqcp0g6d4TgugPxwZ4Jb4e5wCu8mQ9quMedhNWIWcZQ==, tarball: '@prisma/client/download/@prisma/client-3.8.1.tgz'}
     engines: {node: '>=12.6'}
     requiresBuild: true
     peerDependencies:
@@ -731,12 +731,12 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f
+      '@prisma/engines-version': 3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f
       prisma: 3.7.0
     dev: false
 
-  /@prisma/engines-version/3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f:
-    resolution: {integrity: sha512-+qx2b+HK7BKF4VCa0LZ/t1QCXsu6SmvhUQyJkOD2aPpmOzket4fEnSKQZSB0i5tl7rwCDsvAiSeK8o7rf+yvwg==, tarball: '@prisma/engines-version/download/@prisma/engines-version-3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f.tgz'}
+  /@prisma/engines-version/3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f:
+    resolution: {integrity: sha512-G2JH6yWt6ixGKmsRmVgaQYahfwMopim0u/XLIZUo2o/mZ5jdu7+BL+2V5lZr7XiG1axhyrpvlyqE/c0OgYSl3g==, tarball: '@prisma/engines-version/download/@prisma/engines-version-3.8.0-43.34df67547cf5598f5a6cd3eb45f14ee70c3fb86f.tgz'}
     dev: false
 
   /@prisma/engines/3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f:
