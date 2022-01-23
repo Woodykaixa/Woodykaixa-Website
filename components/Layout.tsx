@@ -16,8 +16,10 @@ const { Header, Content, Footer } = Layout;
 function useFetchUser() {
   const { data, error } = useSWR<User.AuthResp, Err.CommonResp>(`/api/user/auth`, fetcher);
   const [, { setUser }] = useUserInfo();
-  if (data) {
+  if (!error && data) {
     setUser(data);
+  } else {
+    setUser(null);
   }
   console.log('fetch user', data, error);
 }
