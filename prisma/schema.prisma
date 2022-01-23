@@ -34,7 +34,7 @@ model User {
 
   /// user's avatars, latest -> oldest
   avatars   AvatarFile[] @relation
-  avatarIds String[]     @db.ObjectId
+  avatarIds String[]     @db.Array(ObjectId)
   Comment   Comment[]
 }
 
@@ -70,7 +70,8 @@ model ImageFile {
   width Int
 
   /// posts referenced this image
-  referencedBy PostFile[]
+  referencedBy      PostFile[] @relation(fields: [referencedPostIds])
+  referencedPostIds String[]   @db.Array(ObjectId)
 
   File   File   @relation(fields: [fileId], references: [id])
   fileId String @db.ObjectId
@@ -86,12 +87,7 @@ model PostFile {
   /// first paragraph or first 20 words of a post
   brief String
 
-  /// cover image url
-  cover ImageFile? @relation(fields: [coverImageId], references: [id])
-
-  coverImageId String? @db.ObjectId
-
-  keywords String[]
+  keywords String[] @db.Array(String)
 
   /// When this post is uploaded
   date DateTime
@@ -101,6 +97,12 @@ model PostFile {
 
   Comments Comment[] @relation
   comments String[]  @db.String
+
+  /// If true, the first of referencedImages is the cover
+  hasCover Boolean
+
+  referencedImages   ImageFile[] @relation(fields: [referencedImageIds])
+  referencedImageIds String[]    @db.Array(ObjectId)
 }
 
 model AvatarFile {
