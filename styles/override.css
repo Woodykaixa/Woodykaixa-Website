@@ -15,3 +15,12 @@
 .ref-title a:hover {
   @apply opacity-100 ease-linear duration-200 transition;
 }
+
+/* These tricky class override ant design styles */
+.blog-list-item-main li:nth-child(2) em {
+  @apply hidden md:inline-block;
+}
+
+.blog-list-item-main li:nth-child(3) {
+  @apply hidden md:inline-block;
+}
