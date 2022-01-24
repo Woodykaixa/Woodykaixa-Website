@@ -30,9 +30,7 @@ const Home: NextPage<ServerSideProps> = props => {
           closable
         />
         <div className='flex flex-col w-3/4 items-center'>
-          <MarkdownViewer tableOfContent components={MinimalOptions}>
-            {props.err_or_content}
-          </MarkdownViewer>
+          <MarkdownViewer components={MinimalOptions}>{props.err_or_content}</MarkdownViewer>
         </div>
       </div>
     </>

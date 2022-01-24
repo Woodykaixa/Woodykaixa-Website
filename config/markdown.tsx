@@ -8,7 +8,7 @@ import { Code } from '@/components/markdown/Code';
 import type { MarkdownOverrideComponents } from '@/components/MarkdownViewer';
 
 export const MinimalOptions: MarkdownOverrideComponents = {
-  code: ({ children, inline, key, className }) => <Code {...{ className, inline, key }}>{children}</Code>,
+  code: ({ children, inline, className }) => <Code {...{ className, inline }}>{children}</Code>,
   // @ts-ignore
   hid: ({ children }) => <Hidden>{children}</Hidden>,
   // @ts-ignore
