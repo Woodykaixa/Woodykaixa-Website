@@ -14,13 +14,12 @@ const Blog: NextPage<ServerSideProps> = props => {
     <>
       <SEOHeaders.Article title={props.title} description={props.brief} image={props.coverImageUrl} id={props.id} />
       <div className='min-h-screen w-full bg-white flex flex-col items-center'>
-        <div className='w-3/4'>
+        <div className='w-full p-2 md:w-3/4'>
           <PageHeader
-            className='px-0 mt-4'
+            className='px-0  md:mt-4'
             title={<Typography.Title level={1}>{props.title}</Typography.Title>}
-            // subTitle={moment(props.date).format('yyyy-MM-DD')}
             tags={props.keywords.map(kw => (
-              <Tag key={kw} color='blue' className='select-none'>
+              <Tag key={kw} color='blue' className='select-none hidden md:inline-block'>
                 {kw}
               </Tag>
             ))}
@@ -47,6 +46,13 @@ const Blog: NextPage<ServerSideProps> = props => {
               </Button>,
             ]}
           ></PageHeader>
+          <div className='md:hidden inline-block mb-4'>
+            {props.keywords.map(kw => (
+              <Tag key={kw} color='blue' className='select-none'>
+                {kw}
+              </Tag>
+            ))}
+          </div>
           <MarkdownViewer components={AdminOptions}>
             {`发布于 ${moment(props.date).format('yyyy-MM-DD')}\n\n` + props.content}
           </MarkdownViewer>

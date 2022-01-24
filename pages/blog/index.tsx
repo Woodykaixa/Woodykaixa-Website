@@ -17,24 +17,30 @@ const { Search } = Input;
 type PostType = Blog.ListResp[number];
 
 const Post = ({ title, date, keywords, comments, brief, id, coverImageUrl }: PostType) => {
+  const actions = [
+    <Space key='post-at'>{moment(date).format('yyyy-MM-DD')}</Space>,
+    <Space key='comments'>
+      <MessageOutlined /> {comments}
+    </Space>,
+  ];
+  if (keywords.length > 0) {
+    actions.push(
+      <Space key='post-keywords'>
+        {keywords.map(kw => (
+          <Tag key={kw} className='select-none'>
+            {kw}
+          </Tag>
+        ))}
+      </Space>
+    );
+  }
   const router = useRouter();
   const [, { setLoading }] = useGlobalStates();
   return (
     <List.Item
+      className='blog-list-item-main'
       key={title}
-      actions={[
-        <Space key='post-at'>{moment(date).format('yyyy-MM-DD')}</Space>,
-        <Space key='comments'>
-          <MessageOutlined /> {comments}
-        </Space>,
-        <Space key='post-keywords'>
-          {keywords.map(kw => (
-            <Tag key={kw} className='select-none'>
-              {kw}
-            </Tag>
-          ))}
-        </Space>,
-      ]}
+      actions={actions}
       extra={
         coverImageUrl && (
           <Image width={'100%'} alt='cover' src={coverImageUrl} height={'100%'} objectFit='contain'></Image>
@@ -65,8 +71,8 @@ const Blog: NextPage<ServerSideProps> = ({ files }) => {
   return (
     <>
       <SEOHeaders.Index title='博客' description="Woodykaixa's blog" url='/blog' />
-      <div className='bg-white p-6 flex flex-col items-center mt-8'>
-        <div className='flex flex-col w-3/4 items-center'>
+      <div className='bg-white p-2 md:p-6 flex flex-col items-center mt-0 md:mt-8'>
+        <div className='flex flex-col w-full lg:w-3/4 items-center'>
           <List
             className='w-full'
             header={
@@ -75,7 +81,7 @@ const Blog: NextPage<ServerSideProps> = ({ files }) => {
                   console.log(e);
                 }}
               >
-                <Form.Item name='search' label='搜索'>
+                <Form.Item name='search'>
                   <div className='flex'>
                     <Mentions
                       autoSize={{ maxRows: 1, minRows: 1 }}
@@ -100,7 +106,7 @@ const Blog: NextPage<ServerSideProps> = ({ files }) => {
             }}
             dataSource={files}
             footer={
-              <div>
+              <div className='px-2'>
                 还没仔细研究过，不过本站的所有文章应该会使用 <b>CC-BY-SA-4.0</b> 协议
               </div>
             }

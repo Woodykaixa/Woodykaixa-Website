@@ -27,14 +27,16 @@ export type MarkdownViewerProps = {
 export type MarkdownOverrideComponents = ReactMarkdownOptions['components'];
 
 export function MarkdownViewer({ children, tableOfContent = false, components }: MarkdownViewerProps) {
-  const remarkPlugins = [remarkGfm, remarkMath, remarkDirective, remarkDirectiveRehype] as any;
+  const markdown = (tableOfContent ? '## 目录\n\n' : '') + children;
+
+  const remarkPlugins = [[remarkGfm], [remarkMath], [remarkDirective], [remarkDirectiveRehype]] as any[];
   if (tableOfContent) {
-    remarkPlugins.push(remarkToc);
+    remarkPlugins.push([remarkToc, { heading: '目录', maxDepth: 3, tight: true, parents: ['root', 'listItem'] }]);
   }
   return (
     <Typography>
       <Markdown remarkPlugins={remarkPlugins} components={components}>
-        {children}
+        {markdown}
       </Markdown>
     </Typography>
   );

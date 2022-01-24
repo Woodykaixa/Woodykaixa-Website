@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Spin, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -15,11 +15,17 @@ const { Header, Content, Footer } = Layout;
 
 function useFetchUser() {
   const { data, error } = useSWR<User.AuthResp, Err.CommonResp>(`/api/user/auth`, fetcher);
-  const [, { setUser }] = useUserInfo();
-  if (!error && data) {
-    setUser(data);
+  const [user, { setUser }] = useUserInfo();
+  if (user) {
+    if (data) {
+      setUser(data);
+    }
   } else {
-    setUser(null);
+    if (error) {
+      setUser(null);
+    } else if (data) {
+      setUser(data);
+    }
   }
   console.log('fetch user', data, error);
 }
@@ -41,9 +47,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <Layout className='min-h-screen'>
-      <Header className='fixed z-10 w-full flex flex-col'>
+      <Header className='fixed z-10 w-full flex flex-col px-0 md:px-14'>
         <div className='flex h-full'>
-          <div className='text-white  mr-6'>
+          <div className='text-white  md:mr-6'>
             <Button
               className='text-white border-0 hover:text-white opacity-80 hover:opacity-100 ease-linear duration-100 transition bg-transparent'
               onClick={() => {
@@ -116,7 +122,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <Spin className='mt-4' spinning={loading}></Spin>
       </Header>
-      <Content className='px-12 py-0 mt-16'>{children}</Content>
+      <Content className='px-0 py-0 mt-16 md:px-12'>{children}</Content>
       <Footer className='text-center'>
         <a href='https://beian.miit.gov.cn/' target='_blank' rel='noreferrer'>
           京ICP备20006005号

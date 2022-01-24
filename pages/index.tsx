@@ -22,17 +22,15 @@ const Home: NextPage<ServerSideProps> = props => {
   return (
     <>
       <SEOHeaders.Index description="Woodykaixa's personal website. Profile, blog, personal net dist, etc." />
-      <div className='bg-white p-6 flex flex-col items-center mt-8'>
+      <div className='bg-white flex flex-col items-center mt-0 md:mt-8'>
         <Alert
           message='暂时没有时间做多分辨率响应式布局，所以建议在宽度超过1536px的设备上浏览'
           className='2xl:hidden'
           type='warning'
           closable
         />
-        <div className='flex flex-col w-3/4 items-center'>
-          <MarkdownViewer tableOfContent components={MinimalOptions}>
-            {props.err_or_content}
-          </MarkdownViewer>
+        <div className='flex flex-col p-4 md:mt-6 md:p-0 md:w-3/4 items-center'>
+          <MarkdownViewer components={MinimalOptions}>{props.err_or_content}</MarkdownViewer>
         </div>
       </div>
     </>
