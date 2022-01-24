@@ -27,6 +27,7 @@ export function LoginPanel({ close }: { close: () => void }) {
       });
     } else {
       setUser(json);
+      console.log('set user to', json);
     }
   };
 

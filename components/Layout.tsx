@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Spin, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -15,11 +15,17 @@ const { Header, Content, Footer } = Layout;
 
 function useFetchUser() {
   const { data, error } = useSWR<User.AuthResp, Err.CommonResp>(`/api/user/auth`, fetcher);
-  const [, { setUser }] = useUserInfo();
-  if (!error && data) {
-    setUser(data);
+  const [user, { setUser }] = useUserInfo();
+  if (user) {
+    if (data) {
+      setUser(data);
+    }
   } else {
-    setUser(null);
+    if (error) {
+      setUser(null);
+    } else if (data) {
+      setUser(data);
+    }
   }
   console.log('fetch user', data, error);
 }
